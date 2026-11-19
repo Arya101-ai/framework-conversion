@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Framework Conversion Story</title>
+<style>
+:root{--bg:#F4F6FA;--surface:#EDF1F7;--card:#FFF;--raise:#F7F9FC;--border:rgba(16,32,64,.10);--border-hi:rgba(16,32,64,.18);--text:#0B1A3A;--text-sec:#475674;--text-dim:#6B7894;--blue:#1E56E3;--teal:#0D8A80;--cyan:#0891B2;--violet:#7C3AED;--good:#0B8A4B;--warn:#A9700F;--bad:#D0344C;--navy:#0B1A3A;--navy2:#13306F;--grad:linear-gradient(90deg,var(--blue),var(--teal));--shadow:0 1px 2px rgba(16,32,64,.05),0 10px 28px -14px rgba(16,32,64,.18);--sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--chrome:62px;--dock:62px;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(16,32,64,.07) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 40%,#000 25%,transparent 100%);mask-image:radial-gradient(ellipse 80% 80% at 50% 40%,#000 25%,transparent 100%)}
+.blob{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;opacity:.1}.blob.a{width:520px;height:300px;background:var(--blue);top:-120px;left:8%}.blob.b{width:400px;height:260px;background:var(--teal);top:40px;right:4%}
+/* chrome */
+.chrome{position:fixed;top:0;left:0;right:0;height:var(--chrome);z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 20px}
+.row{display:flex;align-items:center;gap:14px;height:100%;max-width:1320px;margin:auto}
+.brand{display:flex;align-items:center;gap:12px;white-space:nowrap;flex:none}.brand img{height:18px;filter:brightness(0);opacity:.88;display:block}.brand .d{width:1px;height:20px;background:var(--border-hi)}
+.mark{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:14.5px}.mark svg{width:19px;height:19px;color:var(--blue)}
+.rail{flex:1;min-width:0;display:flex;gap:3px;overflow-x:auto;scrollbar-width:none;padding:2px;scroll-behavior:smooth}.rail::-webkit-scrollbar{display:none}
+.rail button{flex:none;font-size:12.5px;font-weight:600;color:var(--text-sec);padding:7px 11px;border-radius:999px;border:1px solid transparent;white-space:nowrap;transition:.2s}.rail button:hover{color:var(--text);border-color:var(--border)}.rail button[aria-current=true]{color:var(--text);background:rgba(30,86,227,.13);border-color:rgba(30,86,227,.45)}
+.tools{display:flex;gap:8px;flex:none}.pill{font-size:12px;font-weight:700;padding:7px 14px;border-radius:999px;border:1px solid var(--border-hi);color:var(--text-sec);transition:.2s;white-space:nowrap}.pill:hover{color:var(--text);border-color:var(--blue)}.pill[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.progress{position:absolute;left:0;right:0;bottom:-1px;height:3px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy2),var(--blue),var(--teal));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+/* stage */
+#stage{position:fixed;top:var(--chrome);bottom:var(--dock);left:0;right:0;overflow:hidden;z-index:1}
+.chapter{width:min(1240px,calc(100% - 48px));margin:0 auto;padding:22px 0 8px;transform-origin:50% 0;display:grid;gap:16px;align-content:start}
+.dock{position:fixed;left:0;right:0;bottom:0;height:var(--dock);display:flex;align-items:center;justify-content:center;gap:12px;z-index:40}
+.nb{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border-hi);box-shadow:var(--shadow);transition:.2s}.nb:hover:not(:disabled){border-color:var(--blue);color:var(--blue)}.nb:disabled{opacity:.4;cursor:default}.nb.primary{background:var(--navy);color:#fff;border-color:var(--navy)}.nb.primary:hover:not(:disabled){color:#fff;background:var(--navy2)}
+.pos{font:500 12px var(--mono);color:var(--text-dim);min-width:240px;text-align:center}
+/* wipe */
+.wipe{position:fixed;top:var(--chrome);bottom:0;left:0;right:0;z-index:45;pointer-events:none;background:linear-gradient(100deg,var(--navy) 0%,var(--navy2) 55%,var(--blue) 100%);transform:translateX(-101%);display:grid;place-items:center;color:#fff}
+.wipe.in{transform:translateX(0);transition:transform .3s cubic-bezier(.7,0,.3,1)}.wipe.out{transform:translateX(101%);transition:transform .33s cubic-bezier(.7,0,.3,1)}
+.wipe.back{transform:translateX(101%)}.wipe.back.in{transform:translateX(0)}.wipe.back.out{transform:translateX(-101%)}
+.wipe div{display:grid;gap:6px;text-align:center}.wipe span{font:500 13px var(--mono);letter-spacing:.16em;opacity:.75}.wipe b{font-size:30px;letter-spacing:-.02em}
+/* type */
+.kicker{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--blue);display:flex;align-items:center;gap:10px}.kicker::before{content:"";width:18px;height:2px;background:var(--blue)}
+h1{font-size:clamp(34px,4.3vw,56px);line-height:1.06;letter-spacing:-.03em;font-weight:800;text-wrap:balance;max-width:15ch}
+h2{font-size:clamp(26px,2.6vw,36px);line-height:1.12;letter-spacing:-.025em;font-weight:800;margin-top:8px}
+.hl{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(15px,1.35vw,18px);color:var(--text-sec);max-width:54ch}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.ctrl{display:flex;align-items:center;gap:8px;flex:none}
+.rbtn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid var(--border-hi);background:var(--card);color:var(--text-sec);transition:.2s}.rbtn:hover{color:var(--blue);border-color:var(--blue)}.rbtn svg{width:13px;height:13px}
+.illus{font:500 11px var(--mono);color:var(--text-dim);border:1px solid var(--border);border-radius:6px;padding:2px 7px;background:var(--raise);white-space:nowrap}
+.illus.real{color:var(--teal);border-color:rgba(13,138,128,.3);background:rgba(13,138,128,.06)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:20px;min-width:0}
+.label{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+.nt{display:none;font-size:13px;color:var(--text-sec);background:rgba(30,86,227,.06);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:9px 12px}body.notes .nt{display:block}.nt b{color:var(--text)}
+.tag{font:500 11px var(--mono);padding:2px 8px;border-radius:6px;white-space:nowrap;background:var(--surface);color:var(--text-sec);transition:background .4s,color .4s}.tag.p{background:rgba(11,138,75,.12);color:var(--good)}.tag.f{background:rgba(208,52,76,.12);color:var(--bad)}.tag.a{background:rgba(30,86,227,.11);color:var(--blue)}.tag.k{background:rgba(124,58,237,.11);color:var(--violet)}.tag.w{background:rgba(169,112,15,.13);color:var(--warn)}.tag.t{background:rgba(13,138,128,.12);color:var(--teal)}
+.btn{font-weight:700;font-size:14px;padding:12px 20px;border-radius:12px;background:var(--blue);color:#fff;transition:.2s}.btn:hover{transform:translateY(-1px);background:#1848c4}.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--border-hi)}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.mono{font-family:var(--mono)}
+.code{font:12.5px/1.65 var(--mono);background:#0E1A33;color:#D7E0F2;border-radius:12px;padding:14px 16px;white-space:pre;overflow:hidden}
+.code .c{color:#7F8DAA}.code .s{color:#7FD8BE}.code .k{color:#9DB8FF}.code .add{color:#7FD8BE;background:rgba(127,216,190,.08);display:block}.code .del{color:#F39AA8;background:rgba(243,154,168,.08);display:block;text-decoration:line-through;text-decoration-color:rgba(243,154,168,.5)}
+.code .ln{display:block;animation:fadeL .35s both}
+.caret::after{content:"";display:inline-block;width:7px;height:14px;background:#7FD8BE;margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@keyframes fadeL{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.rise{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center;padding-top:14px}
+.hero>.hc{display:grid;gap:18px;justify-items:start}
+.lockup{display:flex;align-items:center;gap:12px}.lockup img{height:22px;filter:brightness(0);opacity:.88}.lockup .d{width:1px;height:22px;background:var(--border-hi)}
+.fwc{display:flex;flex-wrap:wrap;gap:6px}.fwc span{font:500 11.5px var(--mono);padding:4px 9px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text-sec)}
+.hv{display:grid;gap:10px;padding:20px;border-radius:22px}
+.hvh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hvb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--text-dim)}
+.hvr{display:grid;grid-template-columns:1fr auto 92px;gap:12px;align-items:center;padding:9px 12px;background:var(--raise);border:1px solid var(--border);border-radius:12px;font-size:13.5px;transition:border-color .5s,background .5s}
+.hvr .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}.hvr .d{font:500 12px var(--mono);color:var(--text-dim);text-align:right}
+.hvr.on{border-color:rgba(30,86,227,.45);background:rgba(30,86,227,.05)}.hvr.ok{border-color:rgba(11,138,75,.35);background:rgba(11,138,75,.04)}
+.hvk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}.hvk div{padding:12px;border-radius:12px;background:var(--surface);display:grid;gap:2px}.hvk b{font-size:24px;letter-spacing:-.02em}.hvk div>span{font-size:12px;color:var(--text-sec)}
+/* frameworks */
+.fw{display:grid;grid-template-columns:minmax(0,1fr) 70px minmax(0,1.15fr);gap:0;align-items:stretch}
+.fwl,.fwr{display:grid;gap:12px;align-content:start}
+.fwgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fwgrid span{font-size:12.5px;font-weight:600;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:var(--raise);text-align:center;transition:.4s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fwgrid span.on{border-color:var(--blue);background:rgba(30,86,227,.08);color:var(--blue);transform:scale(1.04)}
+.fwsrc{min-height:92px;white-space:pre-wrap}
+.fwa{display:grid;place-items:center}.fwa svg{width:54px;height:54px;color:var(--blue)}.fwa .dash{stroke-dasharray:6 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.cmdlog{display:grid;gap:5px;height:330px;align-content:start;overflow:hidden}
+.cl{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font:12px var(--mono);padding:6px 10px;border-radius:8px;background:var(--raise);border:1px solid var(--border);animation:fadeL .4s both}
+.cl .src{color:var(--violet);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cl .cmd{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.same{font:600 11px var(--mono);color:var(--good)}
+/* how */
+.how{display:grid;gap:18px}
+.track{position:relative;height:6px;border-radius:6px;background:var(--surface);margin:6px 12.5% 0}.track i{position:absolute;inset:0 auto 0 0;width:0;border-radius:6px;background:var(--grad);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.st{display:grid;gap:10px;align-content:start;opacity:.45;transform:translateY(6px);transition:opacity .7s,transform .7s,border-color .7s;min-height:300px}
+.st.on{opacity:1;transform:none;border-color:rgba(30,86,227,.4)}
+.st .num{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font:700 15px var(--mono);background:rgba(30,86,227,.1);color:var(--blue)}.st.on .num{background:var(--grad);color:#fff}
+.st b{font-size:17px}.st p{font-size:14px;color:var(--text-sec)}
+.st .io{margin-top:auto;display:grid;gap:6px;padding-top:10px;border-top:1px dashed var(--border-hi)}.st .io span{font-size:12.5px;color:var(--text-sec)}
+.callout{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;background:linear-gradient(90deg,rgba(30,86,227,.08),rgba(13,138,128,.08));border:1px solid rgba(30,86,227,.2);font-weight:600;font-size:15px;opacity:0;transition:opacity .8s}.callout.on{opacity:1}
+/* bring */
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.g2 .panel{display:grid;gap:12px;align-content:start}
+.term{font:12.5px/1.75 var(--mono);background:#0E1A33;color:#D7E0F2;border-radius:12px;padding:14px 16px;height:300px;overflow:hidden}
+.term .ln{display:grid;grid-template-columns:1fr auto auto;gap:14px;animation:fadeL .35s both}.term .ln .ok{color:#7FD8BE}.term .ln .dim{color:#7F8DAA}.term .ln.full{display:block}
+.diff{height:300px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--border-hi)}.chip i{width:8px;height:8px;border-radius:50%;background:var(--teal)}
+/* session viewer */
+.sv{display:grid;grid-template-columns:300px minmax(0,1fr);gap:0;padding:0;overflow:hidden}
+.svl{border-right:1px solid var(--border);padding:16px;display:grid;gap:8px;align-content:start;background:var(--raise)}
+.svb{display:grid;gap:3px;padding-bottom:8px;border-bottom:1px solid var(--border)}.svb b{font-size:14px}.svb span{font:11.5px var(--mono);color:var(--text-dim)}
+.ss{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;padding:8px 10px;border-radius:10px;font-size:12.5px;border:1px solid transparent;transition:.4s}.ss i{width:8px;height:8px;border-radius:50%;background:var(--good)}.ss b{font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.ss small{grid-column:2;font:11px var(--mono);color:var(--text-dim)}
+.ss.on{background:var(--card);border-color:rgba(30,86,227,.45);box-shadow:var(--shadow)}
+.svr{padding:16px 18px;display:grid;gap:10px;align-content:start}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border)}.tabs span{font-size:12.5px;font-weight:700;padding:7px 12px;color:var(--text-sec);border-bottom:2px solid transparent;display:inline-flex;gap:6px;align-items:center}.tabs span.on{color:var(--blue);border-color:var(--blue)}.tabs em{font:normal 500 10.5px var(--mono);padding:1px 6px;border-radius:6px;background:var(--surface);color:var(--text-dim)}
+.lh,.lr{display:grid;grid-template-columns:30px 120px minmax(0,1fr) 150px 50px;gap:10px;align-items:center;font:12px var(--mono)}
+.lh{color:var(--text-dim);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:0 10px}
+.lrs{display:grid;gap:4px;height:352px;align-content:start;overflow:hidden}
+.lr{padding:6px 10px;border-radius:8px;background:var(--raise);border:1px solid var(--border);animation:fadeL .35s both}.lr span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.lr .cm{color:var(--blue);font-weight:600}.lr .rs{color:var(--good)}.lr .ms{color:var(--text-dim);text-align:right}
+.lr.err{background:rgba(208,52,76,.06);border-color:rgba(208,52,76,.3)}.lr.err .rs{color:var(--bad)}.lr.typed .ar{color:var(--violet);font-weight:600}
+.svf{display:flex;justify-content:space-between;align-items:center;font:12px var(--mono);color:var(--text-sec)}
+/* generate */
+.gen{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:16px}
+.chat{display:grid;gap:8px;align-content:start;height:440px;overflow:hidden}
+.msg{max-width:92%;padding:10px 13px;border-radius:14px;font-size:13.5px;animation:rise .5s both}.msg.u{justify-self:end;background:var(--navy);color:#fff;border-bottom-right-radius:4px}.msg.a{background:var(--raise);border:1px solid var(--border);border-bottom-left-radius:4px}
+.tool{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:start;font:12px var(--mono);padding:7px 10px;border-radius:10px;border:1px dashed var(--border-hi);color:var(--text-sec);animation:rise .4s both}
+.tool .sp{width:14px;height:14px;border-radius:50%;border:2px solid var(--border-hi);border-top-color:var(--blue);animation:spin .8s linear infinite;margin-top:2px}.tool.done .sp{animation:none;border:0;background:var(--good);-webkit-mask:none}.tool.done .sp::after{content:"✓";display:block;color:#fff;font-size:10px;line-height:14px;text-align:center}
+.tool b{color:var(--text);font-weight:600}
+@keyframes spin{to{transform:rotate(360deg)}}
+.genr{display:grid;grid-template-columns:220px minmax(0,1fr);gap:12px;height:440px}
+.tree{font:12px/1.5 var(--mono);display:grid;gap:2px;align-content:start;padding:12px;border-radius:12px;background:var(--raise);border:1px solid var(--border);overflow:hidden}
+.tree div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:fadeL .35s both;padding:1px 4px;border-radius:5px}.tree .dir{color:var(--text-dim)}.tree .f{color:var(--text)}.tree .new{background:rgba(13,138,128,.1);color:var(--teal)}
+.genr .code{height:100%}
+/* compare */
+.cmp{display:grid;gap:8px}
+.cr{display:grid;grid-template-columns:200px minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}
+.cr>div{padding:12px 16px;border-radius:12px;font-size:14px;display:flex;align-items:center;gap:10px}
+.cr .k{font-weight:700}
+.cr .s{background:var(--card);border:1px solid var(--border);color:var(--text-sec);opacity:0;transition:opacity .6s}
+.cr .r{background:linear-gradient(90deg,rgba(30,86,227,.07),rgba(13,138,128,.07));border:1px solid rgba(30,86,227,.25);font-weight:600;opacity:0;transform:translateX(16px);transition:opacity .6s,transform .6s}
+.cr.on .s,.cr.on .r{opacity:1;transform:none}
+.cr .s::before{content:"✗";color:var(--bad);font-weight:700}.cr .r::before{content:"✓";color:var(--good);font-weight:700}
+.cr.hd>div{padding:2px 16px;background:none;border:0;opacity:1;transform:none;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}.cr.hd>div::before{content:none}
+/* dashboard */
+.builds{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bd{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:13px}.bd b{font-size:13.5px}.bd .mono{color:var(--text-dim);font-size:12px;margin-left:auto}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.kp{display:grid;gap:3px;padding:12px 14px}.kp .v{font-size:21px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}.kp .v s{color:var(--text-dim);font-weight:600;font-size:14px;text-decoration:none}.kp .dl{font:600 11.5px var(--mono);color:var(--good)}
+.chart{display:grid;gap:8px;padding:16px 18px}
+.chh{display:flex;justify-content:space-between;align-items:center}
+.seg{display:inline-flex;gap:4px;padding:3px;background:var(--surface);border:1px solid var(--border);border-radius:999px}.seg button{font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;color:var(--text-sec);transition:.25s}.seg button[aria-pressed=true]{background:var(--card);color:var(--navy);box-shadow:0 1px 2px rgba(16,32,64,.08),0 4px 12px -4px rgba(16,32,64,.22)}
+.br{display:grid;grid-template-columns:270px minmax(0,1fr) 64px;gap:12px;align-items:center}
+.br .n{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bars{display:grid;gap:3px}.bar{height:10px;border-radius:6px;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1);position:relative}.bar.b{background:#C5CDDC}.bar.a{background:var(--grad)}
+.bv{display:grid;gap:3px;font:11px/10px var(--mono);color:var(--text-dim);position:absolute;right:-4px;transform:translateX(100%)}
+.bars{position:relative;padding-right:56px}
+.bars em{position:absolute;right:0;font:normal 500 11px/10px var(--mono);color:var(--text-dim)}.bars em.e1{top:0}.bars em.e2{top:13px;color:var(--teal)}
+.br .dt{font:600 11.5px var(--mono);color:var(--good);text-align:right;opacity:0;transition:opacity .6s}.br.on .dt{opacity:1}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--text-sec)}.legend i{display:inline-block;width:12px;height:8px;border-radius:4px;margin-right:6px;vertical-align:1px}
+/* green */
+.tl{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:12px;padding-top:4px}
+.tl::before{content:"";position:absolute;left:8%;right:8%;top:27px;height:3px;background:var(--surface);border-radius:3px}
+.tl .fill{position:absolute;left:8%;top:27px;height:3px;width:0;max-width:84%;background:var(--grad);border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.tn{position:relative;display:grid;gap:8px;justify-items:center;text-align:center;opacity:.35;transition:opacity .6s}
+.tn.on{opacity:1}
+.tn .o{width:26px;height:26px;border-radius:50%;background:var(--card);border:3px solid var(--border-hi);margin-top:15px;transition:.5s;z-index:1}
+.tn.on .o{border-color:var(--blue)}.tn.on.g .o{border-color:var(--good);background:var(--good)}.tn.on.r .o{border-color:var(--bad);background:var(--bad)}.tn.on.p .o{border-color:var(--violet);background:var(--violet)}
+.tn b{font-size:14px}.tn .tm{font:11.5px var(--mono);color:var(--text-dim)}
+.dots{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:12px}.dots i{width:11px;height:11px;border-radius:3px;background:var(--surface)}.dots i.g{background:var(--good)}.dots i.r{background:var(--bad)}.dots i.p{background:var(--violet)}
+.tn .why{font-size:12.5px;color:var(--text-sec);line-height:1.4}
+.gd{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+.gdc{display:grid;gap:10px;align-content:start;min-height:168px}
+.fx{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:13.5px;padding:10px 12px;border-radius:10px;background:var(--raise);border:1px solid var(--border);animation:rise .5s both}.fx .tag{margin-top:1px}
+.win{display:grid;gap:12px;align-content:center;justify-items:start}.win b{font-size:40px;letter-spacing:-.03em;line-height:1}.win span{font-size:13px;color:var(--text-sec)}
+/* hidden */
+.g4{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lc{display:grid;gap:10px;align-content:start;opacity:.5;transition:opacity .6s,border-color .6s;min-height:206px}.lc.on{opacity:1;border-color:rgba(30,86,227,.4)}
+.lc .hd{display:flex;align-items:center;gap:10px}.lc .hd .num{font:700 12px var(--mono);width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:rgba(30,86,227,.1);color:var(--blue)}.lc .hd b{font-size:15.5px}
+.lv{display:grid;gap:6px;min-height:118px;align-content:start}
+.sib{display:grid;grid-template-columns:200px 1fr;gap:10px;align-items:center;font:12px var(--mono);transition:all .9s cubic-bezier(.4,0,.2,1)}.sib .bx{height:12px;border-radius:5px;background:linear-gradient(90deg,#C5CDDC,#C5CDDC 30%,#D6DCE7 30%,#D6DCE7 55%,#C5CDDC 55%);}
+.sib.m{opacity:0;max-height:0;margin:-3px 0}
+.mg{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;animation:rise .5s both}
+.lg{font:12px var(--mono);padding:6px 10px;border-radius:8px;background:var(--raise);border:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;animation:fadeL .4s both}.lg.bad{border-color:rgba(208,52,76,.3);background:rgba(208,52,76,.05)}.lg.good{border-color:rgba(11,138,75,.3);background:rgba(11,138,75,.05)}.lg .x{color:var(--bad);font-weight:700}.lg .y{color:var(--good);font-weight:700}
+/* deliver */
+.dl{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px}
+.ft{display:grid;gap:1px;align-content:start;font:12px var(--mono);padding:14px 16px}
+.ft .dir{color:var(--text-dim);padding:3px 8px}
+.ft button{text-align:left;padding:3px 8px 3px 22px;border-radius:7px;color:var(--text);transition:.2s;font:12.5px var(--mono);display:flex;justify-content:space-between;gap:8px}.ft button:hover{background:var(--surface)}.ft button[aria-pressed=true]{background:rgba(30,86,227,.1);color:var(--blue);font-weight:600}
+.ft button small{font-size:10.5px;color:var(--text-dim)}
+.cv{display:grid;grid-template-rows:auto 1fr;gap:10px}.cvh{display:flex;justify-content:space-between;align-items:center;gap:10px}.cvh b{font:600 13px var(--mono)}.cvh span.d{font-size:12.5px;color:var(--text-sec)}
+.cv .code{height:330px}
+.gets{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.gt{display:grid;gap:4px;padding:11px 13px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--text-sec)}.gt b{font-size:13px;color:var(--text)}
+/* scope */
+.sc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.sl{display:grid;gap:5px;align-content:start}
+.sll{font:12px var(--mono);padding:7px 11px;border-radius:8px;background:var(--raise);border:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}
+.sll.gh{border:1.5px dashed var(--border-hi);background:transparent;color:var(--text-dim);transition:.6s}.sll.gh.on{border-color:var(--bad);color:var(--bad);background:rgba(208,52,76,.04)}
+.sll.inf{border-color:rgba(169,112,15,.35)}
+.rules{display:grid;gap:10px;align-content:start}
+.rl{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;padding:13px 15px;opacity:0;transform:translateX(14px);transition:opacity .6s,transform .6s}.rl.on{opacity:1;transform:none}
+.rl .num{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font:700 13px var(--mono);background:rgba(13,138,128,.12);color:var(--teal)}.rl b{font-size:14.5px;display:block}.rl p{font-size:13px;color:var(--text-sec)}
+/* faq */
+.search{width:100%;max-width:560px;font:inherit;font-size:15px;padding:12px 16px;border-radius:12px;border:1px solid var(--border-hi);background:var(--card)}
+.fqs{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.fq{padding:0;overflow:hidden}.fq button{width:100%;text-align:left;padding:14px 16px;font-weight:700;font-size:14.5px;display:flex;justify-content:space-between;gap:10px;align-items:center}.fq button::after{content:"+";font:600 18px var(--mono);color:var(--blue);transition:transform .3s}.fq.open button::after{transform:rotate(45deg)}
+.fq .a{display:none;padding:0 16px 14px;font-size:13.5px;color:var(--text-sec)}.fq.open .a{display:block}
+mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
+/* start */
+.ps3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ps{display:grid;gap:10px;align-content:start;opacity:0;transform:translateY(12px);transition:opacity .7s,transform .7s;min-height:220px}.ps.on{opacity:1;transform:none}
+.ps .n{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font:800 20px var(--sans);background:var(--grad);color:#fff}.ps b{font-size:19px}.ps p{font-size:14.5px;color:var(--text-sec)}
+.ps .pv{margin-top:auto;font:12px var(--mono);padding:8px 10px;border-radius:9px;background:var(--raise);border:1px solid var(--border);color:var(--text-sec)}
+.endc{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-radius:18px;background:linear-gradient(100deg,var(--navy),var(--navy2) 60%,var(--blue));color:#fff}.endc b{font-size:18px}.endc p{font-size:13.5px;opacity:.8}.endc .btn{background:#fff;color:var(--navy)}
+</style></head>
+<body>
+<div class="grid-bg"></div><div class="blob a"></div><div class="blob b"></div>
+
+<header class="chrome"><div class="row">
+  <div class="brand"><img src="data:image/png;base64,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" alt="TestMu AI"><span class="d"></span><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M4 7l3-3M4 7l3 3"/><path d="M20 17H10m10 0l-3-3m3 3l-3 3"/></svg>Framework conversion</span></div>
+  <nav class="rail" id="rail" aria-label="Chapters"></nav>
+  <div class="tools"><button class="pill" id="notesBtn" aria-pressed="false">Details</button><button class="pill" id="fsBtn">Present</button></div>
+</div><div class="progress"><i id="prog"></i></div></header>
+
+<div class="wipe" id="wipe"><div><span id="wn">01 / 14</span><b id="wt">Overview</b></div></div>
+
+<main id="stage">
+
+<!-- 1 -->
+<section class="chapter" id="ch-intro">
+  <div class="hero">
+    <div class="hc">
+      <div class="lockup"><img src="data:image/png;base64,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" alt="TestMu AI"><span class="d"></span><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M4 7l3-3M4 7l3 3"/><path d="M20 17H10m10 0l-3-3m3 3l-3 3"/></svg>Framework conversion</span></div>
+      <div class="kicker">Any suite to Playwright</div>
+      <h1>Bring the suite you have. <span class="hl">Leave with Playwright.</span></h1>
+      <p class="lede">Run your existing tests on TestMu, and the TestMu MCP rewrites what each one did in the browser as a clean Playwright project, then proves it passes on the same grid.</p>
+      <div class="fwc"><span>Selenium</span><span>Katalon Studio</span><span>Tricentis Tosca</span><span>Robot Framework</span><span>WebdriverIO</span><span>Protractor</span><span>Nightwatch</span><span>Selenide / Serenity</span><span>Homegrown WebDriver</span></div>
+      <div class="cta"><button class="btn" data-go="how">See how it works</button><button class="btn ghost" data-go="dashboard">See the pilot results</button></div>
+    </div>
+    <div class="panel hv">
+      <div class="hvh"><span class="label">Pilot: Katalon Studio to Playwright</span><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus real">Pilot data</span></div></div>
+      <div class="hvb"><span class="tag" id="hvFrom">Katalon · build 112382179</span><span>→</span><span class="tag a">Playwright 1.65 · build 112384971</span></div>
+      <div id="hvRows" style="display:grid;gap:7px"></div>
+      <div class="hvk"><div><b><span id="hk1">0</span> of 6</b><span>tests passing after migration</span></div><div><b><span id="hk2">0</span>%</b><span>fewer browser commands per run</span></div><div><b>13m 7s</b><span>to convert and verify all six</span></div></div>
+    </div>
+  </div>
+  <p class="nt"><b>Say:</b> the input is a run on the grid, not your source code. <b>Source:</b> pilot one-pager; TestMu builds 112382179 (Katalon Studio) and 112384971 (Playwright 1.65, TypeScript), Chrome 157 on Windows 11, November 2026. Durations per test are from the before/after dashboard.</p>
+</section>
+
+<!-- 2 -->
+<section class="chapter" id="ch-frameworks" hidden>
+  <div class="sec-h"><div><div class="kicker">Why run logs</div><h2>Every framework becomes the same browser commands.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
+  <div class="fw">
+    <div class="panel fwl"><span class="label">On disk: every framework looks different</span>
+      <div class="fwgrid" id="fwChips"><span>Selenium</span><span>Katalon Studio</span><span>Tricentis Tosca</span><span>Robot Framework</span><span>WebdriverIO</span><span>Protractor</span><span>Nightwatch</span><span>Selenide / Serenity</span><span>Homegrown</span></div>
+      <span class="label" id="fwName">Source</span>
+      <div class="code fwsrc" id="fwSrc"></div>
+      <p style="font-size:13px;color:var(--text-sec)">Keyword tables, object repositories, custom wrappers and record-and-playback files.</p>
+    </div>
+    <div class="fwa"><svg viewBox="0 0 54 54" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path class="dash" d="M4 27h40"/><path d="M36 17l10 10-10 10"/></svg></div>
+    <div class="panel fwr"><span class="label">In the browser: the same WebDriver calls</span>
+      <div class="cmdlog" id="fwLog"></div>
+    </div>
+  </div>
+  <p class="nt"><b>Say:</b> converting from the calls the browser received means one method covers every framework, with no parser per language. <b>Source:</b> framework list and "Why run logs" section of the pilot one-pager. The snippets and commands here are illustrative.</p>
+</section>
+
+<!-- 3 -->
+<section class="chapter" id="ch-how" hidden>
+  <div class="sec-h"><div><div class="kicker">How it works</div><h2>Four steps from your suite to verified Playwright.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button></div></div>
+  <div class="how">
+    <div class="track"><i id="howFill"></i></div>
+    <div class="steps4" id="howS">
+      <div class="panel st"><span class="num">1</span><b>Bring your suite</b><p>Keep the tests exactly as they are. Point them at the TestMu grid with a hub URL and capabilities change.</p><div class="io"><span class="label">You provide</span><span>Existing tests, test environment, test accounts</span></div></div>
+      <div class="panel st"><span class="num">2</span><b>Run it on TestMu</b><p>Each test becomes a session that records every browser command, its arguments and response, plus network logs, video and screenshots.</p><div class="io"><span class="label">Output</span><span>A build ID with one session per test</span></div></div>
+      <div class="panel st"><span class="num">3</span><b>The TestMu MCP writes Playwright</b><p>An AI agent reads each session's command log, rebuilds steps, locators, data and assertions, and merges data-driven tests.</p><div class="io"><span class="label">Output</span><span>Playwright TypeScript, page objects, JSON test data, central config</span></div></div>
+      <div class="panel st"><span class="num">4</span><b>Compare before and after</b><p>The new tests run on the same browser and OS, under the original test names, side by side with the old build.</p><div class="io"><span class="label">Output</span><span>Two TestMu builds and a before/after report</span></div></div>
+    </div>
+    <div class="callout" id="howC"><span class="tag a">No source code</span>You don't hand over source code or rewrite anything first. The run itself is the specification.</div>
+  </div>
+  <p class="nt"><b>Source:</b> "How it works" section of the pilot one-pager.</p>
+</section>
+
+<!-- 4 -->
+<section class="chapter" id="ch-bring" hidden>
+  <div class="sec-h"><div><div class="kicker">Step 1 · Bring your suite</div><h2>Change the hub URL. Keep every test.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
+  <div class="g2">
+    <div class="panel"><span class="label">The only change: remote execution settings</span><div class="code diff" id="brDiff"></div></div>
+    <div class="panel"><span class="label">First run on the TestMu grid</span><div class="term" id="brTerm"></div></div>
+  </div>
+  <div class="chips"><span class="label" style="margin-right:4px">You provide</span><span class="chip"><i></i>Existing tests, as they are</span><span class="chip"><i></i>Test environment</span><span class="chip"><i></i>Test accounts</span><span class="chip" style="border-style:dashed;color:var(--text-sec)">Not needed: source code access</span></div>
+  <p class="nt"><b>Say:</b> most frameworks need only a config change, and this first run becomes the baseline for the before/after dashboard. <b>Source:</b> Step 1 and FAQ in the pilot one-pager. Test names and durations in the terminal are the real "before" figures from build 112382179; the config lines are illustrative.</p>
+</section>
+
+<!-- 5 -->
+<section class="chapter" id="ch-run" hidden>
+  <div class="sec-h"><div><div class="kicker">Step 2 · Run it on TestMu</div><h2>Every test becomes a recorded session.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
+  <div class="panel sv">
+    <div class="svl" id="svL"></div>
+    <div class="svr">
+      <div class="tabs"><span class="on">Commands <em id="svC">0</em></span><span>Network <em id="svN">0</em></span><span>Video <em>1</em></span><span>Screenshots <em id="svS">0</em></span></div>
+      <div class="lh"><span>#</span><span>Command</span><span>Arguments</span><span>Response</span><span style="text-align:right">ms</span></div>
+      <div class="lrs" id="svRows"></div>
+      <div class="svf"><span>Every command, its arguments and its response</span><span class="tag a">Output: one session per test</span></div>
+    </div>
+  </div>
+  <p class="nt"><b>Say:</b> the session list is real: six sessions with their real durations and command counts from build 112382179. The log rows are an illustration of what a session records. Note the failing wait call: the original passing build still logged 78 such errors. <b>Source:</b> Step 2 and before/after dashboard, pilot one-pager.</p>
+</section>
+
+<!-- 6 -->
+<section class="chapter" id="ch-generate" hidden>
+  <div class="sec-h"><div><div class="kicker">Step 3 · The TestMu MCP writes Playwright</div><h2>The MCP reads the log and writes the project.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
+  <div class="gen">
+    <div class="panel chat" id="gChat"></div>
+    <div class="genr"><div class="tree" id="gTree"></div><div class="code" id="gCode"></div></div>
+  </div>
+  <p class="nt"><b>Say:</b> the agent works from the command log only. The merge of three sibling sessions, the recovered upload file and the kept retry all happened in the pilot. <b>Source:</b> Step 3, pilot project layout and lessons 2 to 4 in the pilot one-pager. The chat wording and code are illustrative.</p>
+</section>
+
+<!-- 7 -->
+<section class="chapter" id="ch-compare" hidden>
+  <div class="sec-h"><div><div class="kicker">Source code vs. run logs</div><h2>The log knows what the source code hides.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button></div></div>
+  <div class="panel cmp" id="cmp">
+    <div class="cr hd"><div></div><div>Converting source code</div><div>Converting TestMu run logs</div></div>
+    <div class="cr"><div class="k">Framework coverage</div><div class="s">One parser per framework and language</div><div class="r">Anything that runs on the TestMu grid</div></div>
+    <div class="cr"><div class="k">Locators</div><div class="s">Hidden behind object repositories and helpers</div><div class="r">The exact selector the browser received</div></div>
+    <div class="cr"><div class="k">Test data</div><div class="s">Spread across sheets, variables and profiles</div><div class="r">The values actually typed and uploaded</div></div>
+    <div class="cr"><div class="k">Retries and workarounds</div><div class="s">Buried in shared utility code</div><div class="r">Visible as extra commands in the log</div></div>
+    <div class="cr"><div class="k">Access needed</div><div class="s">The full repository and its dependencies</div><div class="r">A TestMu build ID</div></div>
+    <div class="cr"><div class="k">Proof it works</div><div class="s">Usually a separate project</div><div class="r">Built in: the new tests run on the same grid</div></div>
+  </div>
+  <p class="nt"><b>Say:</b> every locator in the pilot was carried over exactly as logged. <b>Source:</b> comparison table and lesson 1 in the pilot one-pager.</p>
+</section>
+
+<!-- 8 -->
+<section class="chapter" id="ch-dashboard" hidden>
+  <div class="sec-h"><div><div class="kicker">Before / after dashboard</div><h2>Same tests, same grid, side by side.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus real">Pilot data</span></div></div>
+  <div class="builds"><div class="bd"><span class="tag">Before</span><b>Katalon Studio</b><span>tests run one at a time</span><span class="mono">build 112382179</span></div><div class="bd"><span class="tag a">After</span><b>Playwright 1.65 (TypeScript)</b><span>6 tests in parallel</span><span class="mono">build 112384971</span></div></div>
+  <div class="kpis">
+    <div class="panel kp"><span class="label">Passed</span><span class="v"><s>6/6 →</s> <span data-to="6">0</span>/6</span><span class="dl">0 failed</span></div>
+    <div class="panel kp"><span class="label">Errors logged</span><span class="v"><s>78 →</s> <span data-to="0" data-from="78">78</span></span><span class="dl">all removed</span></div>
+    <div class="panel kp"><span class="label">Browser commands</span><span class="v"><s>534 →</s> <span data-to="154" data-from="534">534</span></span><span class="dl">71% fewer</span></div>
+    <div class="panel kp"><span class="label">Test execution</span><span class="v"><s>123s →</s> <span data-to="47" data-from="123">123</span>s</span><span class="dl">62% less</span></div>
+    <div class="panel kp"><span class="label">Suite wall-clock</span><span class="v"><s>185s →</s> <span data-to="27" data-from="185">185</span>s</span><span class="dl">85% less</span></div>
+  </div>
+  <div class="panel chart">
+    <div class="chh"><div class="legend"><span><i style="background:#C5CDDC"></i>Katalon (before)</span><span><i style="background:linear-gradient(90deg,var(--blue),var(--teal))"></i>Playwright (after)</span><span class="mono" style="color:var(--text-dim)">Original test names in both builds</span></div><div class="seg" id="dbSeg"><button aria-pressed="true" data-m="t">Duration</button><button aria-pressed="false" data-m="c">Commands</button></div></div>
+    <div id="dbRows" style="display:grid;gap:9px"></div>
+  </div>
+  <p class="nt"><b>Say:</b> parallel runs came almost for free: 185s sequential down to 27s with 6 parallel sessions. Keeping the names means history and analytics line up with no remapping. <b>Source:</b> before/after dashboard, builds 112382179 and 112384971, Chrome 157 on Windows 11, conversion window 13:35:43 to 13:48:50 UTC.</p>
+</section>
+
+<!-- 9 -->
+<section class="chapter" id="ch-green" hidden>
+  <div class="sec-h"><div><div class="kicker">Getting to green</div><h2>No test passed without a green session.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus real">Pilot data</span></div></div>
+  <div class="panel" style="padding:18px 16px 16px"><div class="tl" id="tl"><span class="fill" id="tlF"></span></div></div>
+  <div class="gd">
+    <div class="panel gdc"><div class="chh"><span class="label" id="gdT">Run detail</span><span class="tag" id="gdS">waiting</span></div><div id="gdB" style="display:grid;gap:8px"></div></div>
+    <div class="panel win"><span class="label">Conversion window</span><b class="hl">13m 7s</b><span>13:35:43 to 13:48:50 UTC, from start of conversion to all six tests green on TestMu.</span><span class="tag p" id="gwin" style="opacity:0;transition:opacity .6s">6 passed · 0 failed</span></div>
+  </div>
+  <p class="nt"><b>Say:</b> failures were fixed in the generated code and re-run on the grid. The CDN fix is a documented, switchable route for that one script. <b>Source:</b> "Getting to green" and lessons 6 and 7 in the pilot one-pager.</p>
+</section>
+
+<!-- 10 -->
+<section class="chapter" id="ch-hidden" hidden>
+  <div class="sec-h"><div><div class="kicker">Lessons from the pilot</div><h2>The log holds what nobody wrote down.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus real">Pilot evidence</span></div></div>
+  <div class="g4" id="hid">
+    <div class="panel lc"><div class="hd"><span class="num">1</span><b>Data-driven tests show up as sibling sessions</b></div><div class="lv" id="hA"></div></div>
+    <div class="panel lc"><div class="hd"><span class="num">2</span><b>Hidden retries are kept, not dropped</b></div><div class="lv" id="hB"></div></div>
+    <div class="panel lc"><div class="hd"><span class="num">3</span><b>Logs hold data you forgot you had</b></div><div class="lv" id="hC"></div></div>
+    <div class="panel lc"><div class="hd"><span class="num">4</span><b>Read formats from the app, don't assume them</b></div><div class="lv" id="hD"></div></div>
+  </div>
+  <p class="nt"><b>Say:</b> each lesson came from something that actually happened in the pilot and is now part of the process. <b>Source:</b> lessons 2, 3, 4 and 6 in the pilot one-pager (step similarity 0.98 to 1.00; isSelected false, executeScript(click), isSelected true; POST /file decoded into test-data/files/Dummy file.txt; expected 11/25/2026, received 25/11/2026).</p>
+</section>
+
+<!-- 11 -->
+<section class="chapter" id="ch-deliver" hidden>
+  <div class="sec-h"><div><div class="kicker">What you get</div><h2>A Playwright project your team can own.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
+  <div class="dl">
+    <div class="panel ft" id="ft"></div>
+    <div class="panel cv"><div class="cvh"><b id="cvN"></b><span class="d" id="cvD"></span></div><div class="code" id="cvC"></div></div>
+  </div>
+  <div class="gets">
+    <div class="gt"><b>Original names</b>History and test-management links line up</div>
+    <div class="gt"><b>Page Object Model</b>Shared parts, like a date picker, written once</div>
+    <div class="gt"><b>Test data files</b>One script plus JSON per data-driven test</div>
+    <div class="gt"><b>Central config</b>URLs, timeouts, grid settings, workarounds</div>
+    <div class="gt"><b>TestMu wiring</b>A fixture names and reports each session</div>
+    <div class="gt"><b>Before/after report</b>Every session's video, screenshots and logs</div>
+  </div>
+  <p class="nt"><b>Say:</b> these are standard Playwright tests; the TestMu connection is a single fixture your team can extend. Credentials sit in one file and grid keys come from LT_USERNAME and LT_ACCESS_KEY. <b>Source:</b> "What you get", pilot project layout, lesson 8 and FAQ in the pilot one-pager. The file list is the real pilot layout; the code is illustrative.</p>
+</section>
+
+<!-- 12 -->
+<section class="chapter" id="ch-scope" hidden>
+  <div class="sec-h"><div><div class="kicker">Scope</div><h2>What a log can't see, and how we close it.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
+  <div class="sc">
+    <div class="panel" style="display:grid;gap:10px;align-content:start"><span class="label">One session, as the log records it</span>
+      <div class="sl" id="scL"></div>
+    </div>
+    <div class="rules" id="scR">
+      <div class="panel rl"><span class="num">1</span><div><b>Run every data set at least once</b><p>Each branch and row gets its own session, so nothing goes unrecorded.</p></div></div>
+      <div class="panel rl"><span class="num">2</span><div><b>Mark inferred assertions</b><p>In the code and in the report, so each one gets a human check.</p></div></div>
+      <div class="panel rl"><span class="num">3</span><div><b>Don't invent checks</b><p>If the original test didn't assert something, the migration doesn't add it silently.</p></div></div>
+      <div class="panel rl"><span class="num">4</span><div><b>Your test owners review</b><p>Page objects and data files get reviewed before sign-off. Source code helps here, but isn't required.</p></div></div>
+    </div>
+  </div>
+  <p class="nt"><b>Say:</b> a log only records what happened in the browser on that run. Not visible: branches that didn't run, checks outside the browser (database, API, file), comparisons done in code, and hooks that don't touch the browser. <b>Source:</b> "Scope" section of the pilot one-pager.</p>
+</section>
+
+<!-- 13 -->
+<section class="chapter" id="ch-faq" hidden>
+  <div><div class="kicker">Questions</div><h2>What teams ask before a migration.</h2></div>
+  <input class="search" id="fqS" type="search" placeholder="Search, for example: source code, failing, TypeScript, how long" aria-label="Search questions">
+  <div class="fqs" id="fqs"></div>
+  <p id="fqE" hidden style="color:var(--text-sec)">No match. Ask your TestMu team.</p>
+  <p class="nt"><b>Source:</b> FAQ section of the pilot one-pager.</p>
+</section>
+
+<!-- 14 -->
+<section class="chapter" id="ch-start" hidden>
+  <div class="sec-h"><div><div class="kicker">Start with one build</div><h2>Bring one slice. Get back verified Playwright.</h2></div><div class="ctrl"><button class="rbtn" data-replay></button></div></div>
+  <div class="ps3" id="psS">
+    <div class="panel ps"><span class="n">1</span><b>Run a slice of your suite on TestMu</b><p>Ten to fifty tests that matter, in whatever framework you use today.</p><div class="pv">hub URL + capabilities → build ID</div></div>
+    <div class="panel ps"><span class="n">2</span><b>Share the build ID</b><p>That's the only input the conversion needs. Add test accounts if the app requires a login.</p><div class="pv">build 112382179 · 6 sessions</div></div>
+    <div class="panel ps"><span class="n">3</span><b>Review the project and dashboard</b><p>Migrated tests under the original names, verified on the same browser and OS.</p><div class="pv">build 112384971 · 6 passed · side by side</div></div>
+  </div>
+  <div class="endc"><div><b>Pick a slice of your suite.</b><p>We return it as verified Playwright, with the before/after dashboard to show your team.</p></div><div class="cta"><button class="btn" data-go="dashboard">See the pilot dashboard</button><button class="btn ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" data-go="intro">Back to the start</button></div></div>
+  <p class="nt"><b>Say:</b> we size each project after looking at one build. The build IDs on the cards are the pilot's, shown as examples of what each step produces. <b>Source:</b> "Start with one build" and FAQ in the pilot one-pager.</p>
+</section>
+
+</main>
+
+<div class="dock"><button class="nb" id="prev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>Previous</button><span class="pos" id="pos"></span><button class="nb primary" id="next">Next<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
+
+<!-- code snippets (illustrative) -->
+<script type="text/plain" data-file="config/variables.ts" data-d="URLs, timeouts, grid capabilities, workarounds">export const vars = {
+  curaUrl: 'https://katalon-demo-cura.herokuapp.com/',
+  timeouts: { action: 15_000, navigation: 30_000 },
+  grid: {
+    browserName: 'Chrome',
+    browserVersion: '157',
+    platform: 'Windows 11',
+  },
+  workarounds: {
+    // cdn.guru99.com timed out in the pilot
+    GURU99_CDN_FALLBACK: true, // serve jQuery from code.jquery.com
+  },
+};</script>
+<script type="text/plain" data-file="fixtures/lt-fixture.ts" data-d="Connects each test to TestMu and reports status">import { test as base, chromium } from '@playwright/test';
+import { vars } from '../config/variables';
+
+export const test = base.extend({
+  page: async ({}, use, testInfo) => {
+    const caps = { ...vars.grid, 'LT:Options': {
+      user: process.env.LT_USERNAME,
+      accessKey: process.env.LT_ACCESS_KEY,
+      name: testInfo.title, // original test name
+    } };
+    const browser = await chromium.connect(gridUrl(caps));
+    const page = await browser.newPage();
+    await use(page);
+    await reportStatus(page, testInfo.status); // pass or fail
+    await browser.close();
+  },
+});</script>
+<script type="text/plain" data-file="pages/cura/AppointmentPage.ts" data-d="Locators exactly as logged, retry kept as a fallback">export class AppointmentPage extends BasePage {
+  // logged: //input[@name='programs' and @value='Medicaid']
+  programRadio(name: string) {
+    return this.page.locator(
+      `//input[@name='programs' and @value='${name}']`);
+  }
+
+  async selectProgram(name: string) {
+    const radio = this.programRadio(name);
+    await radio.click();
+    if (!(await radio.isChecked())) {
+      // the log showed a JS click retry; kept, runs only if needed
+      await radio.evaluate((el: HTMLInputElement) => el.click());
+    }
+    await expect(radio).toBeChecked();
+  }
+}</script>
+<script type="text/plain" data-file="pages/components/DatePicker.ts" data-d="Shared component, written once">export class DatePicker {
+  constructor(private input: Locator) {}
+
+  // read the format from the field itself, not assumed
+  async format() {
+    return (await this.input.getAttribute('placeholder')) ?? 'mm/dd/yyyy';
+  }
+
+  async pick(date: Date) {
+    const value = formatDate(date, await this.format());
+    await this.input.fill(value);
+    await expect(this.input).toHaveValue(value);
+  }
+}</script>
+<script type="text/plain" data-file="test-data/curaPrograms.json" data-d="Three sibling sessions became one data file">[
+  { "program": "Medicare" },
+  { "program": "Medicaid" },
+  { "program": "None" }
+]</script>
+<script type="text/plain" data-file="tests/TC_CURA_DynamicXPath.spec.ts" data-d="1 script that produces 3 tests">import { test } from '../fixtures/lt-fixture';
+import programs from '../test-data/curaPrograms.json';
+import users from '../test-data/curaUsers.json';
+
+for (const { program } of programs) {
+  // same names as the original sessions
+  test(`TC_CURA_DynamicXPath - ${program}`, async ({ page }) => {
+    await new LoginPage(page).loginAs(users.johnDoe);
+    await new AppointmentPage(page).selectProgram(program);
+  });
+}</script>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var RUN=0;function stopAll(){RUN++}
+function wait(ms){return new Promise(function(r){setTimeout(r,REDUCED?Math.min(ms,30):ms)})}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function hlCode(src){
+  var re=/(\/\/[^\n]*)|('(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`)|\b(import|from|export|const|class|extends|async|await|return|for|of|new|if|private|constructor|true)\b/g,out='',last=0,m;
+  while((m=re.exec(src))){out+=esc(src.slice(last,m.index));out+='<span class="'+(m[1]?'c':m[2]?'s':'k')+'">'+esc(m[0])+'</span>';last=re.lastIndex}
+  return out+esc(src.slice(last));
+}
+function count(el,from,to,ms,t){var s=performance.now();return new Promise(function(res){(function f(n){if(t!==RUN)return res();var p=Math.min(1,(n-s)/(REDUCED?1:ms)),e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(f);else res()})(s)})}
+async function typeCode(el,src,t,lineMs){el.innerHTML='';var lines=src.split('\n');for(var i=0;i<lines.length;i++){if(t!==RUN)return;var d=document.createElement('span');d.className='ln';d.innerHTML=hlCode(lines[i])||' ';el.appendChild(d);await wait(lineMs||90)}}
+async function typeText(el,txt,t,cps){el.textContent='';el.classList.add('caret');for(var i=1;i<=txt.length;i++){if(t!==RUN)return;el.textContent=txt.slice(0,i);await wait(1000/(cps||40))}el.classList.remove('caret')}
+var REPLAY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay';
+
+var TESTS=[['File Upload',24,37,6,29],['TC_CURA_BookAppointment_Calendar',31,175,12,39],['TC_CURA_Login_Parameterization - John Doe',12,58,7,20],['TC_CURA_DynamicXPath - Medicare',18,86,8,22],['TC_CURA_DynamicXPath - Medicaid',19,89,7,22],['TC_CURA_DynamicXPath - None',19,89,7,22]];
+function pct(a,b){return Math.round((1-b/a)*100)}
+
+var S={};
+/* 1 hero */
+S.intro=async function(t){
+  var box=$('#hvRows');box.innerHTML='';$('#hk1').textContent='0';$('#hk2').textContent='0';
+  var rows=TESTS.map(function(x){var r=document.createElement('div');r.className='hvr';r.innerHTML='<span class="n">'+esc(x[0])+'</span><span class="tag">Katalon</span><span class="d">'+x[1]+'s</span>';box.appendChild(r);return r});
+  await wait(700);var passed=0;
+  for(var i=0;i<rows.length;i++){if(t!==RUN)return;var r=rows[i],tg=r.children[1];r.classList.add('on');tg.className='tag a';tg.textContent='converting';await wait(900);if(t!==RUN)return;
+    r.classList.remove('on');r.classList.add('ok');tg.className='tag p';tg.textContent='passed';r.children[2].innerHTML='<s style="text-decoration:line-through;opacity:.6">'+TESTS[i][1]+'s</s> '+TESTS[i][3]+'s';passed++;$('#hk1').textContent=passed;await wait(250)}
+  await count($('#hk2'),0,71,1400,t);
+};
+/* 2 frameworks */
+var FWS=[[1,'Katalon Studio',"WebUI.click(findTestObject('Page_CURA/btn_Login'))"],[3,'Robot Framework','Click Button    id=btn-login'],[2,'Tricentis Tosca','Module: CURA Login\nAttribute: Login    ActionMode: Input\nValue: {CLICK}'],[0,'Selenium (Java)','driver.findElement(By.id("btn-login")).click();'],[4,'WebdriverIO',"await $('#btn-login').click()"]];
+S.frameworks=async function(t){
+  var chips=$$('#fwChips span'),log=$('#fwLog'),src=$('#fwSrc');log.innerHTML='';src.textContent='';chips.forEach(function(c){c.classList.remove('on')});
+  for(var i=0;i<FWS.length;i++){if(t!==RUN)return;var f=FWS[i];chips.forEach(function(c){c.classList.remove('on')});chips[f[0]].classList.add('on');$('#fwName').textContent='Source · '+f[1];
+    await typeText(src,f[2],t,34);await wait(400);if(t!==RUN)return;
+    var a=document.createElement('div');a.className='cl';a.innerHTML='<span class="src">'+esc(f[1])+'</span><span class="cmd">POST /element {"using":"css selector","value":"#btn-login"}</span>'+(i?'<span class="same">✓ same</span>':'<span class="tag p">200</span>');log.appendChild(a);await wait(450);if(t!==RUN)return;
+    var b=document.createElement('div');b.className='cl';b.innerHTML='<span class="src">'+esc(f[1])+'</span><span class="cmd">POST /element/{id}/click</span>'+(i?'<span class="same">✓ same</span>':'<span class="tag p">200</span>');log.appendChild(b);await wait(1300)}
+  chips.forEach(function(c){c.classList.add('on')});
+};
+/* 3 how */
+S.how=async function(t){var st=$$('#howS .st');st.forEach(function(s){s.classList.remove('on')});$('#howFill').style.width='0';$('#howC').classList.remove('on');
+  for(var i=0;i<4;i++){await wait(i?1500:400);if(t!==RUN)return;st[i].classList.add('on');$('#howFill').style.width=(i/3*100)+'%'}
+  await wait(900);if(t===RUN)$('#howC').classList.add('on')};
+/* 4 bring */
+var DIFF=[['c','  # Remote execution settings'],['del','- remote.url   = http://localhost:4444/wd/hub'],['add','+ remote.url   = https://hub.lambdatest.com/wd/hub'],['add','+ user/key     = ${LT_USERNAME} / ${LT_ACCESS_KEY}'],['add','+ capabilities = {'],['add','+   "browserName": "Chrome", "browserVersion": "157",'],['add','+   "LT:Options": { "platformName": "Windows 11",'],['add','+                   "build": "Katalon baseline" }'],['add','+ }'],['',''],['c','  # Test cases, object repository, data files:'],['c','  # unchanged']];
+S.bring=async function(t){var d=$('#brDiff'),tm=$('#brTerm');d.innerHTML='';tm.innerHTML='';
+  for(var i=0;i<DIFF.length;i++){if(t!==RUN)return;var l=document.createElement('span');l.className='ln '+DIFF[i][0];l.textContent=DIFF[i][1]||' ';d.appendChild(l);await wait(DIFF[i][0]==='add'||DIFF[i][0]==='del'?380:180)}
+  await wait(500);if(t!==RUN)return;
+  function line(h,cls){var l=document.createElement('div');l.className='ln '+(cls||'');l.innerHTML=h;tm.appendChild(l)}
+  line('<span>$ run suite --profile testmu</span>','full');await wait(700);if(t!==RUN)return;
+  line('<span class="dim">› Connecting to the TestMu grid</span><span></span><span class="ok">ok</span>');await wait(800);
+  for(var j=0;j<TESTS.length;j++){if(t!==RUN)return;line('<span>› '+esc(TESTS[j][0])+'</span><span class="ok">passed</span><span class="dim">'+TESTS[j][1]+'s</span>');await wait(650)}
+  if(t!==RUN)return;line('<span class="ok">✓ 6 passed · 0 failed · build 112382179</span>','full');
+};
+/* 5 run */
+var LOG=[['navigateTo','https://katalon-demo-cura.herokuapp.com/','200 OK',412],['findElement',"xpath //a[@id='btn-make-appointment']",'element 7f3a',38],['click','element 7f3a','200 OK',96],['findElement','id txt-username','element 81c2',31,'w'],['isDisplayed','element 81c2','false',22,'e','not visible yet: login form still loading, framework polls again'],['isDisplayed','element 81c2','true',24],['sendKeys','element 81c2 ← "John Doe"','200 OK',58,'typed'],['findElement','id txt-password','element 81d0',29],['sendKeys','element 81d0 ← "ThisIsNotAPassword"','200 OK',61,'typed'],['click','id btn-login','200 OK',104],['getCurrentUrl','','…/#appointment',12]];
+S.run=async function(t){var L=$('#svL');L.innerHTML='<div class="svb"><b>Build 112382179</b><span>Katalon Studio · Chrome 157 · Windows 11</span></div>';
+  TESTS.forEach(function(x,i){var d=document.createElement('div');d.className='ss'+(i===2?' on':'');d.innerHTML='<i></i><b>'+esc(x[0])+'</b><small>passed · '+x[1]+'s · '+x[2]+' commands</small>';L.appendChild(d)});
+  var R=$('#svRows');R.innerHTML='';$('#svC').textContent='0';$('#svN').textContent='0';$('#svS').textContent='0';await wait(600);
+  for(var i=0;i<LOG.length;i++){if(t!==RUN)return;var x=LOG[i],r=document.createElement('div');r.className='lr'+(x[4]==='e'?' err':'')+(x[4]==='typed'?' typed':'');
+    r.innerHTML='<span style="color:var(--text-dim)">'+(i+1)+'</span><span class="cm">'+x[0]+'</span><span class="ar" title="'+esc(x[1])+'">'+esc(x[1])+'</span><span class="rs">'+esc(x[2])+'</span><span class="ms">'+x[3]+'</span>';R.appendChild(r);
+    if(x[5]){var w=document.createElement('div');w.className='lr err';w.style.gridTemplateColumns='30px 1fr';w.innerHTML='<span></span><span style="color:var(--bad)">↳ '+esc(x[5])+'</span>';R.appendChild(w)}
+    $('#svC').textContent=i+1;$('#svN').textContent=Math.round((i+1)*1.8);if(x[0]==='click')$('#svS').textContent=+$('#svS').textContent+1;await wait(x[4]==='e'?1300:700)}
+};
+/* 6 generate */
+var TREE=[['dir','config/'],['f','  variables.ts'],['dir','fixtures/'],['f','  lt-fixture.ts'],['dir','pages/'],['f','  BasePage.ts'],['f','  cura/HomePage.ts'],['f','  cura/LoginPage.ts'],['f','  cura/AppointmentPage.ts'],['f','  components/DatePicker.ts'],['dir','test-data/'],['f','  curaUsers.json'],['f','  curaPrograms.json'],['f','  files/Dummy file.txt'],['dir','tests/'],['f','  TC_CURA_DynamicXPath.spec.ts'],['f','  TC_CURA_Login_Parameterization.spec.ts'],['f','  TC_CURA_BookAppointment_Calendar.spec.ts'],['f','  File Upload.spec.ts']];
+S.generate=async function(t){var C=$('#gChat'),T=$('#gTree'),K=$('#gCode');C.innerHTML='';T.innerHTML='';K.innerHTML='';
+  function msg(cls,h){var m=document.createElement('div');m.className='msg '+cls;m.innerHTML=h;C.appendChild(m);return m}
+  async function tool(h,ms){var d=document.createElement('div');d.className='tool';d.innerHTML='<span class="sp"></span><span>'+h+'</span>';C.appendChild(d);await wait(ms);if(t===RUN)d.classList.add('done')}
+  async function tr(a,b){for(var i=a;i<b;i++){if(t!==RUN)return;var d=document.createElement('div');d.className=TREE[i][0]+' new';d.textContent=TREE[i][1];T.appendChild(d);(function(x){setTimeout(function(){x.classList.remove('new')},1200)})(d);await wait(130)}}
+  await wait(400);msg('u','Convert build 112382179 to a Playwright project.');await wait(1100);if(t!==RUN)return;
+  await tool('Reading build <b>112382179</b> · 6 sessions, 534 commands',1300);if(t!==RUN)return;
+  await tool('3 sibling sessions <b>TC_CURA_DynamicXPath</b>, step similarity 0.98 to 1.00 · merging into 1 spec + data file',1700);if(t!==RUN)return;
+  await tr(10,13);
+  await tool('Upload file not in any data sheet · decoded from the <b>POST /file</b> payload',1500);if(t!==RUN)return;
+  await tr(13,14);
+  await tool('Native click did not select the radio, JS click did · keeping it as a <b>fallback</b>',1500);if(t!==RUN)return;
+  await tool('Writing page objects, config and the TestMu fixture',900);if(t!==RUN)return;
+  await tr(0,10);await tr(14,19);if(t!==RUN)return;
+  msg('a','Done. 6 tests from 4 spec files, original names kept. Next: run them on the same grid.');
+  await wait(300);await typeCode(K,$('script[data-file="pages/cura/AppointmentPage.ts"]').textContent,t,110);
+};
+/* 7 compare */
+S.compare=async function(t){var rs=$$('#cmp .cr:not(.hd)');rs.forEach(function(r){r.classList.remove('on')});for(var i=0;i<rs.length;i++){await wait(i?1100:400);if(t!==RUN)return;rs[i].classList.add('on')}};
+/* 8 dashboard */
+var DBM='t';
+function dbDraw(on){var R=$('#dbRows');if(!R.children.length){TESTS.forEach(function(x){var r=document.createElement('div');r.className='br';r.innerHTML='<span class="n" title="'+esc(x[0])+'">'+esc(x[0])+'</span><div class="bars"><div class="bar b"></div><div class="bar a"></div><em class="e1"></em><em class="e2"></em></div><span class="dt"></span>';R.appendChild(r)})}
+  var rows=$$('#dbRows .br'),bi=DBM==='t'?1:2,ai=DBM==='t'?3:4,max=Math.max.apply(null,TESTS.map(function(x){return x[bi]})),u=DBM==='t'?'s':'';
+  rows.forEach(function(r,i){var x=TESTS[i],b=$('.bar.b',r),a=$('.bar.a',r);$('.e1',r).textContent=x[bi]+u;$('.e2',r).textContent=x[ai]+u;b.style.width=on?(x[bi]/max*100)+'%':'0';a.style.width=on?(x[ai]/max*100)+'%':'0';$('.dt',r).textContent=pct(x[bi],x[ai])+'% '+(DBM==='t'?'less':'fewer');r.classList.toggle('on',!!on)})}
+function dbSeg(m){DBM=m;$$('#dbSeg button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.m===m))});dbDraw(true)}
+$$('#dbSeg button').forEach(function(b){b.onclick=function(){stopAll();dbSeg(b.dataset.m)}});
+S.dashboard=async function(t){DBM='t';$$('#dbSeg button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.m==='t'))});dbDraw(false);
+  var ks=$$('#ch-dashboard [data-to]');ks.forEach(function(k){k.textContent=k.dataset.from||'0'});await wait(500);if(t!==RUN)return;
+  ks.forEach(function(k){count(k,+(k.dataset.from||0),+k.dataset.to,1800,t)});await wait(600);if(t!==RUN)return;dbDraw(true);
+  await wait(5200);if(t!==RUN)return;dbSeg('c')};
+/* 9 green */
+var TL=[['Run 1','13:41:22','gggggg'.slice(0,4)+'rr','r','4 passed · 2 failed','Date format mismatch; upload page never finished loading.',[['f','TC_CURA_BookAppointment_Calendar','expected "11/25/2026", received "25/11/2026"'],['f','File Upload','upload page never finished loading']]],
+ ['Run 2','13:42:37','gr','r','1 passed · 1 failed','Calendar fixed; upload page still stuck loading.',[['p','TC_CURA_BookAppointment_Calendar','format now read from the field placeholder'],['f','File Upload','upload page still stuck loading']]],
+ ['Run 3','13:43:54','r','r','0 passed · 1 failed','Upload form never rendered.',[['f','File Upload','upload form never rendered']]],
+ ['Probes 1-3','13:45 to 13:47','ppp','p','3 diagnostic sessions','Traced it to an unreachable third-party CDN.',[['k','Probe sessions','cdn.guru99.com timed out'],['p','Fix','jQuery served from code.jquery.com, switchable with GURU99_CDN_FALLBACK']]],
+ ['Run 4','13:48:23','gggggg','g','6 passed · 0 failed','All six tests green.',[['p','All six tests','green on TestMu, Chrome 157 on Windows 11']]],
+ ['Run 5','14:09:43','ggggg','g','5 passed · 0 failed','Re-verified after centralising credentials.',[['p','Regression','credentials moved into curaUsers.json; grid keys from environment variables']]]];
+S.green=async function(t){var box=$('#tl');$$('.tn',box).forEach(function(n){n.remove()});$('#tlF').style.width='0';$('#gwin').style.opacity='0';$('#gdB').innerHTML='';$('#gdT').textContent='Run detail';$('#gdS').className='tag';$('#gdS').textContent='waiting';
+  var nodes=TL.map(function(x){var n=document.createElement('div');n.className='tn '+x[3];n.innerHTML='<span class="o"></span><b>'+x[0]+'</b><span class="tm">'+x[1]+'</span><div class="dots">'+x[2].split('').map(function(c){return '<i></i>'}).join('')+'</div><span class="why">'+esc(x[5])+'</span>';box.appendChild(n);return n});
+  for(var i=0;i<TL.length;i++){await wait(i?2600:500);if(t!==RUN)return;var x=TL[i],n=nodes[i];n.classList.add('on');$('#tlF').style.width=(i/(TL.length-1)*84)+'%';
+    $$('.dots i',n).forEach(function(d,j){setTimeout(function(){if(t===RUN)d.className=x[2][j]},j*120)});
+    $('#gdT').textContent=x[0]+' · '+x[1];var s=$('#gdS');s.className='tag '+(x[3]==='g'?'p':x[3]==='r'?'f':'k');s.textContent=x[4];
+    var B=$('#gdB');B.innerHTML='';x[6].forEach(function(f){var d=document.createElement('div');d.className='fx';d.innerHTML='<span class="tag '+f[0]+'">'+(f[0]==='f'?'failed':f[0]==='k'?'probe':'fixed')+'</span><div><b style="font-size:13.5px">'+esc(f[1])+'</b><div style="color:var(--text-sec);font-size:13px">'+esc(f[2])+'</div></div>';B.appendChild(d)});
+    if(i===4)$('#gwin').style.opacity='1'}};
+/* 10 hidden */
+S.hidden=async function(t){var cs=$$('#hid .lc');cs.forEach(function(c){c.classList.remove('on')});['#hA','#hB','#hC','#hD'].forEach(function(s){$(s).innerHTML=''});
+  function add(p,cls,h){var d=document.createElement('div');d.className=cls;d.innerHTML=h;$(p).appendChild(d);return d}
+  // A
+  await wait(400);if(t!==RUN)return;cs[0].classList.add('on');
+  var sibs=['Medicare','Medicaid','None'].map(function(n){return add('#hA','sib','<span>TC_CURA_DynamicXPath - '+n+'</span><span class="bx"></span>')});await wait(600);
+  add('#hA','mg','<span class="tag a">step similarity 0.98 to 1.00</span>');await wait(1500);if(t!==RUN)return;
+  sibs[1].classList.add('m');sibs[2].classList.add('m');await wait(900);if(t!==RUN)return;
+  sibs[0].innerHTML='<span style="color:var(--teal);font-weight:600">TC_CURA_DynamicXPath.spec.ts</span><span class="bx" style="background:var(--grad)"></span>';
+  add('#hA','mg','<span class="tag t">+ curaPrograms.json</span><span>→ still 3 tests, original names</span>');await wait(1600);if(t!==RUN)return;
+  // B
+  cs[1].classList.add('on');var B=[['lg','click(radio Medicaid)','<span>200</span>'],['lg bad','isSelected','<span class="x">false</span>'],['lg','executeScript(click)','<span>hidden retry</span>'],['lg good','isSelected','<span class="y">true</span>']];
+  for(var i=0;i<B.length;i++){if(t!==RUN)return;add('#hB',B[i][0],'<span>'+B[i][1]+'</span>'+B[i][2]);await wait(800)}
+  add('#hB','mg','<span class="tag p">kept</span><span>fallback runs only when needed, then asserts</span>');await wait(1600);if(t!==RUN)return;
+  // C
+  cs[2].classList.add('on');add('#hC','lg','<span>POST /file</span><span>multipart payload in the command log</span>');await wait(900);if(t!==RUN)return;
+  add('#hC','lg','<span>not in any data sheet</span><span class="x">missing</span>');await wait(900);if(t!==RUN)return;
+  add('#hC','lg good','<span>decoded → test-data/files/Dummy file.txt</span><span class="y">saved</span>');await wait(1600);if(t!==RUN)return;
+  // D
+  cs[3].classList.add('on');add('#hD','lg bad','<span>expected "11/25/2026"</span><span>received "25/11/2026" <span class="x">✗</span></span>');await wait(1000);if(t!==RUN)return;
+  add('#hD','lg','<span>why</span><span>the format was assumed, not read from the app</span>');await wait(1000);if(t!==RUN)return;
+  add('#hD','lg good','<span>format read from the field placeholder</span><span>either locale <span class="y">✓</span></span>');
+};
+/* 11 deliver */
+var FILES=$$('script[data-file]').map(function(s){return [s.dataset.file,s.dataset.d,s.textContent]});
+var LAYOUT=[['dir','config/'],['config/variables.ts'],['dir','fixtures/'],['fixtures/lt-fixture.ts'],['dir','pages/'],['x','BasePage.ts'],['x','cura/HomePage.ts'],['x','cura/LoginPage.ts'],['pages/cura/AppointmentPage.ts'],['pages/components/DatePicker.ts'],['dir','test-data/'],['x','curaUsers.json'],['test-data/curaPrograms.json'],['x','curaLogin.json and others'],['dir','tests/'],['tests/TC_CURA_DynamicXPath.spec.ts'],['x','TC_CURA_Login_Parameterization.spec.ts'],['x','TC_CURA_BookAppointment_Calendar.spec.ts'],['x','File Upload.spec.ts']];
+(function(){var F=$('#ft');LAYOUT.forEach(function(l){if(l[0]==='dir'){var d=document.createElement('div');d.className='dir';d.textContent=l[1];F.appendChild(d)}else if(l[0]==='x'){var e=document.createElement('div');e.style.cssText='padding:3px 8px 3px 22px;color:var(--text-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';e.textContent=l[1];F.appendChild(e)}else{var b=document.createElement('button');b.dataset.f=l[0];b.setAttribute('aria-pressed','false');b.innerHTML=esc(l[0].split('/').slice(-1)[0])+'<small>●</small>';b.onclick=function(){stopAll();showFile(l[0])};F.appendChild(b)}})})();
+function showFile(f){var x=FILES.filter(function(y){return y[0]===f})[0];if(!x)return;$$('#ft button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.f===f))});$('#cvN').textContent=x[0];$('#cvD').textContent=x[1];var c=$('#cvC');c.innerHTML=hlCode(x[2]);c.classList.remove('rise');void c.offsetWidth;c.classList.add('rise')}
+S.deliver=async function(t){var order=['config/variables.ts','fixtures/lt-fixture.ts','pages/cura/AppointmentPage.ts','pages/components/DatePicker.ts','test-data/curaPrograms.json','tests/TC_CURA_DynamicXPath.spec.ts'];
+  for(var k=0;k<2;k++)for(var i=0;i<order.length;i++){if(t!==RUN)return;showFile(order[i]);await wait(4200)}};
+/* 12 scope */
+var SC=[['','navigateTo /','200'],['','findElement #txt-username','element'],['gh','if (promo banner) { ... }  branch not taken','not recorded'],['','sendKeys "John Doe"','200'],['gh','SELECT status FROM bookings  (framework DB check)','not recorded'],['inf','getText #summary','"Medicaid"'],['inf','  → compared in code, not in the browser','assertion inferred'],['gh','afterTest hook: delete test data','not recorded']];
+S.scope=async function(t){var L=$('#scL');L.innerHTML='';$$('#scR .rl').forEach(function(r){r.classList.remove('on')});
+  for(var i=0;i<SC.length;i++){var d=document.createElement('div');d.className='sll '+SC[i][0];d.innerHTML='<span>'+esc(SC[i][1])+'</span><span>'+esc(SC[i][2])+'</span>';L.appendChild(d)}
+  var gh=$$('.sll.gh, .sll.inf',L);await wait(500);
+  for(var j=0;j<gh.length;j++){if(t!==RUN)return;gh[j].classList.add('on');if(gh[j].classList.contains('inf'))gh[j].style.background='rgba(169,112,15,.07)';await wait(900)}
+  var rl=$$('#scR .rl');for(var k=0;k<rl.length;k++){await wait(900);if(t!==RUN)return;rl[k].classList.add('on')}};
+/* 13 faq */
+var FAQ=[['Do you need our source code?','No. The input is a TestMu build. Source code helps when reviewing inferred assertions or non-browser steps, but the conversion runs without it.'],
+['Our tests don\'t run on TestMu yet. Is that a problem?','Usually not. Any suite that drives a browser through WebDriver can point at the TestMu grid with a hub URL and capability change. That first run also gives you a baseline for the before/after dashboard.'],
+['What if some tests fail today?','A failing session still logs every command up to the failure, so those steps convert. The rest needs either a passing run or input from the test\'s owner. The dashboard shows the original failures, so nobody mistakes an existing failure for a migration regression.'],
+['Which Playwright language do we get?','TypeScript by default, with Playwright Test as the runner, page objects, JSON test data and a typed config file.'],
+['Do the new tests run anywhere other than TestMu?','They are standard Playwright tests. The pilot project connects only to TestMu so that results stay comparable, but the TestMu connection is a single fixture your team can extend.'],
+['How long does a migration take?','The six-test pilot took 13 minutes 7 seconds from start of conversion to all tests green on TestMu. Real suites vary with their size, how much third-party content their sites load, and how many hidden workarounds the logs reveal. We size each project after looking at one build.']];
+(function(){var B=$('#fqs');FAQ.forEach(function(f,i){var d=document.createElement('div');d.className='panel fq'+(i===0?' open':'');d.innerHTML='<button type="button" aria-expanded="'+(i===0)+'"></button><div class="a"></div>';B.appendChild(d);$('button',d).onclick=function(){var o=d.classList.toggle('open');this.setAttribute('aria-expanded',String(o))}});
+  function render(q){var any=false;q=q.trim().toLowerCase();$$('.fq',B).forEach(function(d,i){var f=FAQ[i],hit=!q||(f[0]+' '+f[1]).toLowerCase().indexOf(q)>=0;d.hidden=!hit;if(hit)any=true;var mk=function(s){if(!q)return esc(s);var lo=s.toLowerCase(),o='',p=0,k;while((k=lo.indexOf(q,p))>=0){o+=esc(s.slice(p,k))+'<mark>'+esc(s.slice(k,k+q.length))+'</mark>';p=k+q.length}return o+esc(s.slice(p))};$('button',d).innerHTML=mk(f[0]);$('.a',d).innerHTML=mk(f[1]);if(q&&hit)d.classList.add('open')});$('#fqE').hidden=any}
+  render('');$('#fqS').addEventListener('input',function(){render(this.value)})})();
+/* 14 start */
+S.start=async function(t){var ps=$$('#psS .ps');ps.forEach(function(p){p.classList.remove('on')});for(var i=0;i<ps.length;i++){await wait(i?900:300);if(t!==RUN)return;ps[i].classList.add('on')}};
+
+/* ===== navigation ===== */
+var CH=[['intro','Overview'],['frameworks','Any framework'],['how','How it works'],['bring','Bring your suite'],['run','Run on TestMu'],['generate','MCP writes Playwright'],['compare','Source vs. logs'],['dashboard','Before / after'],['green','Getting to green'],['hidden','Lessons'],['deliver','What you get'],['scope','Scope'],['faq','FAQs'],['start','Start']];
+var cur=-1,tok=0,rail=$('#rail');
+function idx(id){for(var i=0;i<CH.length;i++)if(CH[i][0]===id)return i;return -1}
+CH.forEach(function(c,i){var b=document.createElement('button');b.type='button';b.textContent=c[1];b.onclick=function(){go(i)};rail.appendChild(b)});
+$$('.rbtn').forEach(function(b){b.innerHTML=REPLAY;b.onclick=function(){play(CH[cur][0])}});
+function play(id){stopAll();var t=RUN;if(S[id])S[id](t).catch(function(e){console.error(e)})}
+function fit(){var c=$('#ch-'+CH[cur][0]);if(!c)return;c.style.transform='none';var st=$('#stage'),ah=st.clientHeight-4,h=c.offsetHeight;var s=Math.min(1,ah/h);c.style.transform=s<.999?'scale('+s.toFixed(4)+')':'';c.style.marginTop=s<.999?'0':Math.round((ah-h)/3)+'px'}
+function paint(i){$$('.chapter').forEach(function(c,j){c.hidden=j!==i});
+  $$('#rail button').forEach(function(b,j){b.setAttribute('aria-current',String(j===i));if(j===i){var l=b.offsetLeft-rail.offsetLeft-rail.clientWidth/2+b.offsetWidth/2;rail.scrollLeft=l}});
+  $('#prog').style.width=((i+1)/CH.length*100)+'%';$('#pos').textContent=String(i+1).padStart(2,'0')+' / '+CH.length+' · '+CH[i][1];$('#prev').disabled=i===0;$('#next').disabled=i===CH.length-1;
+  fit();play(CH[i][0])}
+function go(i,nohash){if(i<0||i>=CH.length||i===cur)return;stopAll();var prev=cur;cur=i;
+  if(!nohash){try{history.replaceState(null,'','#'+CH[i][0])}catch(e){}}
+  if(prev<0||REDUCED){paint(i);return}
+  var w=$('#wipe'),t=++tok;$('#wn').textContent=String(i+1).padStart(2,'0')+' / '+CH.length;$('#wt').textContent=CH[i][1];
+  w.className='wipe'+(i<prev?' back':'');void w.offsetWidth;w.className='wipe in'+(i<prev?' back':'');
+  setTimeout(function(){if(t!==tok)return;paint(i);w.className='wipe out'+(i<prev?' back':'');setTimeout(function(){if(t===tok)w.className='wipe'},360)},310)}
+$('#prev').onclick=function(){go(cur-1)};$('#next').onclick=function(){go(cur+1)};
+document.addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(b)go(idx(b.dataset.go))});
+document.addEventListener('keydown',function(e){if(/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1)});
+$('#notesBtn').onclick=function(){var on=document.body.classList.toggle('notes');this.setAttribute('aria-pressed',String(on));fit()};
+$('#fsBtn').onclick=function(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+window.addEventListener('resize',function(){if(cur>=0)fit()});
+if(window.ResizeObserver){var ro=new ResizeObserver(function(){if(cur>=0)fit()});$$('.chapter').forEach(function(c){ro.observe(c)})}
+function route(){var i=idx((location.hash||'').slice(1));return i<0?0:i}
+go(route(),true);
+window.addEventListener('hashchange',function(){var i=route();if(i!==cur)go(i,true)});
+})();
+</script>
+</body></html>
