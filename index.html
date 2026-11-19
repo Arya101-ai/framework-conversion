@@ -280,10 +280,10 @@ mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
     <div class="panel hv">
       <div class="hvh"><span class="label">One test, end to end</span><div class="ctrl"><button class="rbtn" data-replay></button><span class="illus">Simulated example</span></div></div>
       <div class="pvw">
-        <div class="pvb" id="pvLog"><span class="label"><span>TestMu session log · original suite</span><span id="pvFw">Katalon Studio</span></span></div>
+        <div class="pvb" id="pvLog"><span class="label"><span>TestMu session log · original suite</span><span id="pvFw">any framework</span></span></div>
         <div class="pva" id="pvA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg>TestMu MCP rebuilds steps, locators and data</div>
         <div class="pvc" id="pvCode"></div>
-        <div class="pvr" id="pvR"><span class="tag p">passed</span><b>TC_CURA_Login_Parameterization - John Doe</b><span class="mono" style="font-size:11.5px;color:var(--text-dim)">same name, same grid</span></div>
+        <div class="pvr" id="pvR"><span class="tag p">passed</span><b>TC_Login_DataDriven - Standard user</b><span class="mono" style="font-size:11.5px;color:var(--text-dim)">same name, same grid</span></div>
       </div>
       <div class="upto"><div><small>Pilot</small><b>Up to 71%</b><span>fewer browser commands</span></div><div><small>Pilot</small><b>Up to 62%</b><span>less test execution time</span></div><div><small>Pilot</small><b>Up to 85%</b><span>shorter full suite run</span></div></div>
       <span class="disc">From one six-test pilot. Indicative, not a committed result.</span>
@@ -352,7 +352,7 @@ mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
       <div id="brBody"></div>
     </div>
     <div class="panel" style="display:grid;gap:8px;align-content:start">
-      <div class="chh"><span class="label">Session · TC_CURA_Login_Parameterization - John Doe</span><span class="tag a" id="brCount">0 commands</span></div>
+      <div class="chh"><span class="label">Session · TC_Login_DataDriven - Standard user</span><span class="tag a" id="brCount">0 commands</span></div>
       <div class="lh sm"><span>#</span><span>Command</span><span>Arguments</span><span>Response</span></div>
       <div class="lrs sm" id="brRows"></div>
     </div>
@@ -396,7 +396,7 @@ mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
     <div class="panel kp"><span class="label">Full suite run</span><span class="v"><s>185s →</s> <span data-to="27" data-from="185">185</span>s</span><span class="dl">up to 85% shorter</span></div>
   </div>
   <div class="panel chart cmpct">
-    <div class="chh"><div class="legend"><span><i style="background:#C5CDDC"></i>Original (Katalon)</span><span><i style="background:linear-gradient(90deg,var(--blue),var(--teal))"></i>Migrated (Playwright)</span><span class="mono" style="color:var(--text-dim)">Original test names in both builds</span></div><div class="seg" id="dbSeg"><button aria-pressed="true" data-m="t">Duration</button><button aria-pressed="false" data-m="c">Commands</button></div></div>
+    <div class="chh"><div class="legend"><span><i style="background:#C5CDDC"></i>Original suite</span><span><i style="background:linear-gradient(90deg,var(--blue),var(--teal))"></i>Migrated (Playwright)</span><span class="mono" style="color:var(--text-dim)">Original test names in both builds</span></div><div class="seg" id="dbSeg"><button aria-pressed="true" data-m="t">Duration</button><button aria-pressed="false" data-m="c">Commands</button></div></div>
     <div id="dbRows" style="display:grid;gap:7px"></div>
   </div>
   <div class="rulesrow" id="dbRules">
@@ -404,7 +404,7 @@ mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
     <div class="rb"><span class="tag w">rule</span><div><b>Existing failures flagged</b>Never mistaken for a migration regression.</div></div>
     <div class="rb"><span class="tag k">rule</span><div><b>Human input listed</b>Each test that needs it, with the reason.</div></div>
   </div>
-  <p class="nt"><b>Say:</b> these are the pilot's numbers, shown as what the dashboard looks like and what is possible. They are not a committed result for your suite. <b>Source:</b> pilot one-pager, builds 112382179 and 112384971, Chrome 157 on Windows 11, November 2026. Dashboard contents and reporting rules: "The before/after dashboard" in the offer document.</p>
+  <p class="nt"><b>Say:</b> these are the pilot's numbers, shown as what the dashboard looks like and what is possible. They are not a committed result for your suite. <b>Source:</b> pilot one-pager, builds 112382179 and 112384971, Chrome 157 on Windows 11, November 2026. Test names are anonymised; durations and command counts per test are the real pilot values. Dashboard contents and reporting rules: "The before/after dashboard" in the offer document.</p>
 </section>
 
 <!-- 9 -->
@@ -416,7 +416,7 @@ mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
     <div class="panel lc"><div class="hd"><span class="num">3</span><b>Logs hold data that isn't written down anywhere</b></div><div class="lv" id="hC"></div></div>
     <div class="panel lc"><div class="hd"><span class="num">4</span><b>Read formats from the app, don't assume them</b></div><div class="lv" id="hD"></div></div>
   </div>
-  <p class="nt"><b>Say:</b> each card is something that actually happened in the pilot. <b>Source:</b> lessons 2, 3, 4 and 6 in the offer document; evidence from the pilot one-pager (step similarity 0.98 to 1.00; isSelected false, executeScript(click), isSelected true; POST /file decoded into test-data/files/Dummy file.txt; expected 11/25/2026, received 25/11/2026).</p>
+  <p class="nt"><b>Say:</b> each card is something that actually happened in the pilot. <b>Source:</b> lessons 2, 3, 4 and 6 in the offer document; evidence from the pilot one-pager (step similarity 0.98 to 1.00; isSelected false, executeScript(click), isSelected true; POST /file decoded into test-data/files/sample-upload.txt; expected 11/25/2026, received 25/11/2026).</p>
 </section>
 
 <!-- 10 -->
@@ -504,16 +504,15 @@ mark{background:rgba(30,86,227,.16);color:inherit;border-radius:3px}
 <div class="dock"><button class="nb" id="prev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>Previous</button><span class="pos" id="pos"></span><button class="nb primary" id="next">Next<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
 
 <script type="text/plain" data-file="config/variables.ts" data-d="URLs, timeouts, grid capabilities, workarounds">export const vars = {
-  curaUrl: 'https://katalon-demo-cura.herokuapp.com/',
+  baseUrl: process.env.BASE_URL ?? 'https://app.example.com/',
   timeouts: { action: 15_000, navigation: 30_000 },
   grid: {
     browserName: 'Chrome',
-    browserVersion: '157',
     platform: 'Windows 11',
   },
   workarounds: {
-    // cdn.guru99.com timed out in the pilot
-    GURU99_CDN_FALLBACK: true, // serve jQuery from code.jquery.com
+    // a third-party CDN that stops a page rendering on the grid
+    THIRD_PARTY_CDN_FALLBACK: true, // documented, switchable
   },
 };</script>
 <script type="text/plain" data-file="fixtures/lt-fixture.ts" data-d="Connects each test to TestMu and reports status">import { test as base, chromium } from '@playwright/test';
@@ -533,15 +532,15 @@ export const test = base.extend({
     await browser.close();
   },
 });</script>
-<script type="text/plain" data-file="pages/cura/AppointmentPage.ts" data-d="Locators exactly as logged, retry kept as a fallback">export class AppointmentPage extends BasePage {
-  // logged: //input[@name='programs' and @value='Medicaid']
-  programRadio(name: string) {
+<script type="text/plain" data-file="pages/app/CheckoutPage.ts" data-d="Locators exactly as logged, retry kept as a fallback">export class CheckoutPage extends BasePage {
+  // logged: //input[@name='payment' and @value='Wallet']
+  paymentRadio(method: string) {
     return this.page.locator(
-      `//input[@name='programs' and @value='${name}']`);
+      `//input[@name='payment' and @value='${method}']`);
   }
 
-  async selectProgram(name: string) {
-    const radio = this.programRadio(name);
+  async selectPayment(method: string) {
+    const radio = this.paymentRadio(method);
     await radio.click();
     if (!(await radio.isChecked())) {
       // the log showed a JS click retry; kept, runs only if needed
@@ -553,7 +552,7 @@ export const test = base.extend({
 <script type="text/plain" data-file="pages/components/DatePicker.ts" data-d="Shared component, written once">export class DatePicker {
   constructor(private input: Locator) {}
 
-  // read the format from the field itself, not assumed
+  // read the format from the application, not assumed
   async format() {
     return (await this.input.getAttribute('placeholder')) ?? 'mm/dd/yyyy';
   }
@@ -564,27 +563,27 @@ export const test = base.extend({
     await expect(this.input).toHaveValue(value);
   }
 }</script>
-<script type="text/plain" data-file="test-data/curaPrograms.json" data-d="Three sibling sessions became one data file">[
-  { "program": "Medicare" },
-  { "program": "Medicaid" },
-  { "program": "None" }
-]</script>
-<script type="text/plain" data-file="tests/TC_CURA_DynamicXPath.spec.ts" data-d="1 script that produces 3 tests">import { test } from '../fixtures/lt-fixture';
-import programs from '../test-data/curaPrograms.json';
-import users from '../test-data/curaUsers.json';
-
-for (const { program } of programs) {
-  // same names as the original sessions
-  test(`TC_CURA_DynamicXPath - ${program}`, async ({ page }) => {
-    await new LoginPage(page).loginAs(users.johnDoe);
-    await new AppointmentPage(page).selectProgram(program);
-  });
-}</script>
-<script type="text/plain" data-file="test-data/curaUsers.json" data-d="Credentials in one place, secrets from env">{
-  "johnDoe": {
-    "username": "John Doe",
-    "passwordEnv": "CURA_PASSWORD"
+<script type="text/plain" data-file="test-data/users.json" data-d="Credentials in one place, secrets from env">{
+  "standard": {
+    "username": "qa.user@example.com",
+    "passwordEnv": "APP_PASSWORD"
   }
+}</script>
+<script type="text/plain" data-file="test-data/paymentMethods.json" data-d="Three sibling sessions became one data file">[
+  { "method": "Card" },
+  { "method": "Wallet" },
+  { "method": "Invoice" }
+]</script>
+<script type="text/plain" data-file="tests/TC_Checkout_Payment.spec.ts" data-d="1 script that produces 3 tests">import { test } from '../fixtures/lt-fixture';
+import methods from '../test-data/paymentMethods.json';
+import users from '../test-data/users.json';
+
+for (const { method } of methods) {
+  // same names as the original sessions
+  test(`TC_Checkout_Payment - ${method}`, async ({ page }) => {
+    await new LoginPage(page).loginAs(users.standard);
+    await new CheckoutPage(page).selectPayment(method);
+  });
 }</script>
 
 <script>
@@ -604,13 +603,13 @@ function count(el,from,to,ms,t){var s=performance.now();return new Promise(funct
 async function typeCode(el,src,t,lineMs){el.innerHTML='';var lines=src.split('\n');for(var i=0;i<lines.length;i++){if(t!==RUN)return;var d=document.createElement('span');d.className='ln';d.innerHTML=hlCode(lines[i])||' ';el.appendChild(d);await wait(lineMs||90)}}
 async function typeText(el,txt,t,cps){el.textContent='';el.classList.add('caret');for(var i=1;i<=txt.length;i++){if(t!==RUN)return;el.textContent=txt.slice(0,i);await wait(1000/(cps||40))}el.classList.remove('caret')}
 var REPLAY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Replay';
-var TESTS=[['File Upload',24,37,6,29],['TC_CURA_BookAppointment_Calendar',31,175,12,39],['TC_CURA_Login_Parameterization - John Doe',12,58,7,20],['TC_CURA_DynamicXPath - Medicare',18,86,8,22],['TC_CURA_DynamicXPath - Medicaid',19,89,7,22],['TC_CURA_DynamicXPath - None',19,89,7,22]];
+var TESTS=[['TC_FileUpload',24,37,6,29],['TC_Booking_DatePicker',31,175,12,39],['TC_Login_DataDriven - Standard user',12,58,7,20],['TC_Checkout_Payment - Card',18,86,8,22],['TC_Checkout_Payment - Wallet',19,89,7,22],['TC_Checkout_Payment - Invoice',19,89,7,22]];
 function pct(a,b){return Math.round((1-b/a)*100)}
 var S={};
 
 /* 1 hero */
-var PVLOG=[['findElement','id txt-username'],['sendKeys','"John Doe"'],['findElement','id txt-password'],['sendKeys','"••••••••"'],['click','id btn-login']];
-var PVCODE="test('TC_CURA_Login_Parameterization - John Doe',\n  async ({ page }) => {\n    const login = new LoginPage(page);\n    await login.loginAs(users.johnDoe); // from curaUsers.json\n    await expect(page).toHaveURL(/#appointment/);\n});";
+var PVLOG=[['findElement','id username'],['sendKeys','"qa.user@example.com"'],['findElement','id password'],['sendKeys','"••••••••"'],['click','id sign-in']];
+var PVCODE="test('TC_Login_DataDriven - Standard user',\n  async ({ page }) => {\n    const login = new LoginPage(page);\n    await login.loginAs(users.standard); // from users.json\n    await expect(page).toHaveURL(/dashboard/);\n});";
 S.intro=async function(t){var L=$('#pvLog');$$('.pvl',L).forEach(function(x){x.remove()});$('#pvA').classList.remove('on');$('#pvCode').innerHTML='';$('#pvR').classList.remove('on');
   await wait(600);for(var i=0;i<PVLOG.length;i++){if(t!==RUN)return;var d=document.createElement('div');d.className='pvl';d.innerHTML='<span><span class="cm">'+PVLOG[i][0]+'</span> '+esc(PVLOG[i][1])+'</span><span class="ok">200</span>';L.appendChild(d);await wait(520)}
   await wait(400);if(t!==RUN)return;$('#pvA').classList.add('on');await wait(900);if(t!==RUN)return;
@@ -619,7 +618,7 @@ S.intro=async function(t){var L=$('#pvLog');$$('.pvl',L).forEach(function(x){x.r
 /* 2 why */
 S.why=async function(t){var O=$('#lnOld'),N=$('#lnNew');$$('.tr',O).forEach(function(x){x.remove()});$$('.tr',N).forEach(function(x){x.remove()});$$('.why1',O).forEach(function(x){x.remove()});
   $$('#pains .pain').forEach(function(p){p.classList.remove('on')});$('#whyC').classList.remove('on');
-  var names=['Login','Book appointment','Upload file','Search'];
+  var names=['Login','Checkout','Upload file','Search'];
   function rows(P){return names.map(function(n){var r=document.createElement('div');r.className='tr';r.innerHTML='<span class="nm">'+n+'</span><div class="pb"><i></i></div><span class="st2">queued</span>';P.appendChild(r);return r})}
   var ro=rows(O),rn=rows(N);var why=document.createElement('div');why.className='why1';why.textContent='✗ Upload file failed: wait timed out before the page settled (timing, not a real bug)';O.appendChild(why);
   await wait(600);if(t!==RUN)return;
@@ -633,12 +632,12 @@ S.why=async function(t){var O=$('#lnOld'),N=$('#lnNew');$$('.tr',O).forEach(func
   await wait(700);if(t===RUN)$('#whyC').classList.add('on')};
 
 /* 3 frameworks */
-var FWS=[[1,'Katalon Studio',"WebUI.click(findTestObject('Page_CURA/btn_Login'))"],[3,'Robot Framework','Click Button    id=btn-login'],[2,'Tricentis Tosca','Module: CURA Login\nAttribute: Login    ActionMode: Input\nValue: {CLICK}'],[8,'Codeception',"$I->click('#btn-login');"],[10,'Selenium (Ruby)',"driver.find_element(id: 'btn-login').click"],[4,'WebdriverIO',"await $('#btn-login').click()"]];
+var FWS=[[1,'Katalon Studio',"WebUI.click(findTestObject('Page_Login/btn_SignIn'))"],[3,'Robot Framework','Click Button    id=sign-in'],[2,'Tricentis Tosca','Module: Login Page\nAttribute: Sign in    ActionMode: Input\nValue: {CLICK}'],[8,'Codeception',"$I->click('#sign-in');"],[10,'Selenium (Ruby)',"driver.find_element(id: 'sign-in').click"],[4,'WebdriverIO',"await $('#sign-in').click()"]];
 S.frameworks=async function(t){var chips=$$('#fwChips span'),log=$('#fwLog'),src=$('#fwSrc');log.innerHTML='';src.textContent='';chips.forEach(function(c){c.classList.remove('on')});
   for(var i=0;i<FWS.length;i++){if(t!==RUN)return;var f=FWS[i];chips.forEach(function(c){c.classList.remove('on')});chips[f[0]].classList.add('on');$('#fwName').textContent='Source · '+f[1];
     await typeText(src,f[2],t,34);await wait(400);if(t!==RUN)return;
     if(log.children.length>=8){log.removeChild(log.firstChild);log.removeChild(log.firstChild)}
-    var a=document.createElement('div');a.className='cl';a.innerHTML='<span class="src">'+esc(f[1])+'</span><span class="cmd">POST /element {"using":"css selector","value":"#btn-login"}</span>'+(i?'<span class="same">✓ same</span>':'<span class="tag p">200</span>');log.appendChild(a);await wait(450);if(t!==RUN)return;
+    var a=document.createElement('div');a.className='cl';a.innerHTML='<span class="src">'+esc(f[1])+'</span><span class="cmd">POST /element {"using":"css selector","value":"#sign-in"}</span>'+(i?'<span class="same">✓ same</span>':'<span class="tag p">200</span>');log.appendChild(a);await wait(450);if(t!==RUN)return;
     var b=document.createElement('div');b.className='cl';b.innerHTML='<span class="src">'+esc(f[1])+'</span><span class="cmd">POST /element/{id}/click</span>'+(i?'<span class="same">✓ same</span>':'<span class="tag p">200</span>');log.appendChild(b);await wait(1300)}
   chips.forEach(function(c){c.classList.add('on')})};
 
@@ -651,7 +650,7 @@ S.how=async function(t){var st=$$('#howS .st');st.forEach(function(s){s.classLis
 var BRMODE='new';
 var DIFF=[['c','  # Remote execution settings'],['del','- remote.url   = http://localhost:4444/wd/hub'],['add','+ remote.url   = https://hub.lambdatest.com/wd/hub'],['add','+ user/key     = ${LT_USERNAME} / ${LT_ACCESS_KEY}'],['add','+ capabilities = {'],['add','+   "browserName": "Chrome",'],['add','+   "LT:Options": { "platformName": "Windows 11",'],['add','+                   "build": "Baseline run" }'],['add','+ }'],['c','  # Tests, objects and data: unchanged']];
 var BUILDS=[['Nightly regression','Chrome · Windows 11 · yesterday'],['Smoke suite','Chrome · macOS · today'],['Checkout flows','Edge · Windows 11 · last week']];
-var LOG=[['navigateTo','https://katalon-demo-cura.herokuapp.com/','200 OK'],['findElement',"xpath //a[@id='btn-make-appointment']",'element 7f3a'],['click','element 7f3a','200 OK'],['findElement','id txt-username','element 81c2'],['isDisplayed','element 81c2','false','e','not visible yet: login form still loading, framework polls again'],['isDisplayed','element 81c2','true'],['sendKeys','element 81c2 ← "John Doe"','200 OK','typed'],['sendKeys','element 81d0 ← "••••••••"','200 OK','typed'],['click','id btn-login','200 OK'],['getCurrentUrl','','…/#appointment']];
+var LOG=[['navigateTo','https://app.example.com/','200 OK'],['findElement',"xpath //a[@id='nav-sign-in']",'element 7f3a'],['click','element 7f3a','200 OK'],['findElement','id username','element 81c2'],['isDisplayed','element 81c2','false','e','not visible yet: login form still loading, framework polls again'],['isDisplayed','element 81c2','true'],['sendKeys','element 81c2 ← "qa.user@example.com"','200 OK','typed'],['sendKeys','element 81d0 ← "••••••••"','200 OK','typed'],['click','id sign-in','200 OK'],['getCurrentUrl','','…/dashboard']];
 $$('#brSeg button').forEach(function(b){b.onclick=function(){BRMODE=b.dataset.m;play('bring')}});
 S.bring=async function(t){$$('#brSeg button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.m===BRMODE))});
   var B=$('#brBody'),R=$('#brRows');B.innerHTML='';R.innerHTML='';$('#brCount').textContent='0 commands';
@@ -667,14 +666,14 @@ S.bring=async function(t){$$('#brSeg button').forEach(function(b){b.setAttribute
     $('#brCount').textContent=(j+1)+' commands';await wait(x[3]==='e'?1300:650)}};
 
 /* 6 generate */
-var TREE=[['dir','config/'],['f','  variables.ts'],['dir','fixtures/'],['f','  lt-fixture.ts'],['dir','pages/'],['f','  BasePage.ts'],['f','  cura/LoginPage.ts'],['f','  cura/AppointmentPage.ts'],['f','  components/DatePicker.ts'],['dir','test-data/'],['f','  curaUsers.json'],['f','  curaPrograms.json'],['f','  files/Dummy file.txt'],['dir','tests/'],['f','  TC_CURA_DynamicXPath.spec.ts'],['f','  TC_CURA_Login_Parameterization.spec.ts'],['f','  TC_CURA_BookAppointment_Calendar.spec.ts'],['f','  File Upload.spec.ts']];
+var TREE=[['dir','config/'],['f','  variables.ts'],['dir','fixtures/'],['f','  lt-fixture.ts'],['dir','pages/'],['f','  BasePage.ts'],['f','  app/LoginPage.ts'],['f','  app/CheckoutPage.ts'],['f','  components/DatePicker.ts'],['dir','test-data/'],['f','  users.json'],['f','  paymentMethods.json'],['f','  files/sample-upload.txt'],['dir','tests/'],['f','  TC_Checkout_Payment.spec.ts'],['f','  TC_Login_DataDriven.spec.ts'],['f','  TC_Booking_DatePicker.spec.ts'],['f','  TC_FileUpload.spec.ts']];
 S.generate=async function(t){var C=$('#gChat'),T=$('#gTree'),K=$('#gCode');C.innerHTML='';T.innerHTML='';K.innerHTML='';
   function msg(cls,h){var m=document.createElement('div');m.className='msg '+cls;m.innerHTML=h;C.appendChild(m)}
   async function tool(h,ms){var d=document.createElement('div');d.className='tool';d.innerHTML='<span class="sp"></span><span>'+h+'</span>';C.appendChild(d);await wait(ms);if(t===RUN)d.classList.add('done')}
   async function tr(a,b){for(var i=a;i<b;i++){if(t!==RUN)return;var d=document.createElement('div');d.className=TREE[i][0]+' new';d.textContent=TREE[i][1];T.appendChild(d);(function(x){setTimeout(function(){x.classList.remove('new')},1200)})(d);await wait(130)}}
   await wait(400);msg('u','Convert this build to a Playwright project.');await wait(1100);if(t!==RUN)return;
   await tool('Reading every session\'s command log',1300);if(t!==RUN)return;
-  await tool('Sibling sessions <b>TC_CURA_DynamicXPath - Medicare / Medicaid / None</b> differ only in data · merging into 1 script + data file',1700);if(t!==RUN)return;
+  await tool('Sibling sessions <b>TC_Checkout_Payment - Card / Wallet / Invoice</b> differ only in data · merging into 1 script + data file',1700);if(t!==RUN)return;
   await tr(9,12);
   await tool('Uploaded file found in the <b>POST /file</b> payload · saving as a fixture',1500);if(t!==RUN)return;
   await tr(12,13);
@@ -682,7 +681,7 @@ S.generate=async function(t){var C=$('#gChat'),T=$('#gTree'),K=$('#gCode');C.inn
   await tool('Moving typed passwords into one data file · grid keys from env',1200);if(t!==RUN)return;
   await tr(0,9);await tr(13,18);if(t!==RUN)return;
   msg('a','Done. Page objects, data files and config generated, original test names kept. Next: verify on the same grid.');
-  await wait(300);await typeCode(K,$('script[data-file="pages/cura/AppointmentPage.ts"]').textContent,t,110)};
+  await wait(300);await typeCode(K,$('script[data-file="pages/app/CheckoutPage.ts"]').textContent,t,110)};
 
 /* 7 compare */
 S.compare=async function(t){var rs=$$('#cmp .cr:not(.hd)');rs.forEach(function(r){r.classList.remove('on')});for(var i=0;i<rs.length;i++){await wait(i?1100:400);if(t!==RUN)return;rs[i].classList.add('on')}};
@@ -704,26 +703,26 @@ S.dashboard=async function(t){DBM='t';$$('#dbSeg button').forEach(function(b){b.
 S.lessons=async function(t){var cs=$$('#hid .lc');cs.forEach(function(c){c.classList.remove('on')});['#hA','#hB','#hC','#hD'].forEach(function(s){$(s).innerHTML=''});
   function add(p,cls,h){var d=document.createElement('div');d.className=cls;d.innerHTML=h;$(p).appendChild(d);return d}
   await wait(400);if(t!==RUN)return;cs[0].classList.add('on');
-  var sibs=['Medicare','Medicaid','None'].map(function(n){return add('#hA','sib','<span>TC_CURA_DynamicXPath - '+n+'</span><span class="bx"></span>')});await wait(600);
+  var sibs=['Card','Wallet','Invoice'].map(function(n){return add('#hA','sib','<span>TC_Checkout_Payment - '+n+'</span><span class="bx"></span>')});await wait(600);
   add('#hA','mg','<span class="tag a">step similarity 0.98 to 1.00</span>');await wait(1500);if(t!==RUN)return;
   sibs[1].classList.add('m');sibs[2].classList.add('m');await wait(900);if(t!==RUN)return;
-  sibs[0].innerHTML='<span style="color:var(--teal);font-weight:600">TC_CURA_DynamicXPath.spec.ts</span><span class="bx" style="background:var(--grad)"></span>';
-  add('#hA','mg','<span class="tag t">+ curaPrograms.json</span><span>→ still one test per original name</span>');await wait(1600);if(t!==RUN)return;
-  cs[1].classList.add('on');var B=[['lg','click(radio Medicaid)','<span>200</span>'],['lg bad','isSelected','<span class="x">false</span>'],['lg','executeScript(click)','<span>hidden retry</span>'],['lg good','isSelected','<span class="y">true</span>']];
+  sibs[0].innerHTML='<span style="color:var(--teal);font-weight:600">TC_Checkout_Payment.spec.ts</span><span class="bx" style="background:var(--grad)"></span>';
+  add('#hA','mg','<span class="tag t">+ paymentMethods.json</span><span>→ still one test per original name</span>');await wait(1600);if(t!==RUN)return;
+  cs[1].classList.add('on');var B=[['lg','click(radio Wallet)','<span>200</span>'],['lg bad','isSelected','<span class="x">false</span>'],['lg','executeScript(click)','<span>hidden retry</span>'],['lg good','isSelected','<span class="y">true</span>']];
   for(var i=0;i<B.length;i++){if(t!==RUN)return;add('#hB',B[i][0],'<span>'+B[i][1]+'</span>'+B[i][2]);await wait(800)}
   add('#hB','mg','<span class="tag p">kept</span><span>explicit fallback, runs only when needed, then asserts</span>');await wait(1600);if(t!==RUN)return;
   cs[2].classList.add('on');add('#hC','lg','<span>POST /file</span><span>payload in the command log</span>');await wait(900);if(t!==RUN)return;
   add('#hC','lg','<span>file on someone\'s machine, in no data sheet</span><span class="x">missing</span>');await wait(900);if(t!==RUN)return;
-  add('#hC','lg good','<span>recovered → test-data/files/Dummy file.txt</span><span class="y">fixture</span>');await wait(1600);if(t!==RUN)return;
+  add('#hC','lg good','<span>recovered → test-data/files/sample-upload.txt</span><span class="y">fixture</span>');await wait(1600);if(t!==RUN)return;
   cs[3].classList.add('on');add('#hD','lg bad','<span>expected "11/25/2026"</span><span>received "25/11/2026" <span class="x">✗</span></span>');await wait(1000);if(t!==RUN)return;
   add('#hD','lg','<span>why</span><span>the format was hardcoded, not read from the app</span>');await wait(1000);if(t!==RUN)return;
   add('#hD','lg good','<span>format taken from the application</span><span>any locale <span class="y">✓</span></span>')};
 
 /* 10 grid */
-var TL=[['Run 1','13:41:22','ggggrr','r','4 passed · 2 failed','Date format mismatch; upload page never finished loading.',[['f','Calendar test','expected "11/25/2026", received "25/11/2026"'],['f','File Upload','upload page never finished loading']]],
- ['Run 2','13:42:37','gr','r','1 passed · 1 failed','Calendar fixed; upload page still stuck loading.',[['p','Calendar test','format now read from the field'],['f','File Upload','upload page still stuck loading']]],
- ['Run 3','13:43:54','r','r','0 passed · 1 failed','Upload form never rendered.',[['f','File Upload','upload form never rendered']]],
- ['Probes 1-3','13:45 to 13:47','ppp','p','3 probe sessions','Traced it to an unreachable third-party CDN.',[['k','Probe sessions','cdn.guru99.com timed out'],['p','Network rule','jQuery served from code.jquery.com, switchable with GURU99_CDN_FALLBACK']]],
+var TL=[['Run 1','13:41:22','ggggrr','r','4 passed · 2 failed','Date format mismatch; upload page never finished loading.',[['f','Date picker test','expected "11/25/2026", received "25/11/2026"'],['f','Upload test','upload page never finished loading']]],
+ ['Run 2','13:42:37','gr','r','1 passed · 1 failed','Calendar fixed; upload page still stuck loading.',[['p','Date picker test','format now read from the field'],['f','Upload test','upload page still stuck loading']]],
+ ['Run 3','13:43:54','r','r','0 passed · 1 failed','Upload form never rendered.',[['f','Upload test','upload form never rendered']]],
+ ['Probes 1-3','13:45 to 13:47','ppp','p','3 probe sessions','Traced it to an unreachable third-party CDN.',[['k','Probe sessions','a third-party CDN timed out'],['p','Network rule','library served from an alternate source, switchable with a config flag']]],
  ['Run 4','13:48:23','gggggg','g','6 passed · 0 failed','All six tests green.',[['p','All six tests','green on the same browser, OS and grid']]],
  ['Run 5','14:09:43','ggggg','g','5 passed · 0 failed','Re-verified after centralising credentials.',[['p','Regression','credentials in one data file, grid keys from the environment']]]];
 S.grid=async function(t){var box=$('#tl');$$('.tn',box).forEach(function(n){n.remove()});$('#tlF').style.width='0';$('#gdB').innerHTML='';$('#gdT').textContent='Run detail';$('#gdS').className='tag';$('#gdS').textContent='waiting';
@@ -737,14 +736,14 @@ S.grid=async function(t){var box=$('#tl');$$('.tn',box).forEach(function(n){n.re
 
 /* 11 deliver */
 var FILES=$$('script[data-file]').map(function(s){return [s.dataset.file,s.dataset.d,s.textContent]});
-var LAYOUT=[['dir','config/'],['config/variables.ts'],['dir','fixtures/'],['fixtures/lt-fixture.ts'],['dir','pages/'],['x','BasePage.ts'],['x','cura/LoginPage.ts'],['pages/cura/AppointmentPage.ts'],['pages/components/DatePicker.ts'],['dir','test-data/'],['test-data/curaUsers.json'],['test-data/curaPrograms.json'],['dir','tests/'],['tests/TC_CURA_DynamicXPath.spec.ts'],['x','TC_CURA_Login_Parameterization.spec.ts'],['x','TC_CURA_BookAppointment_Calendar.spec.ts'],['x','File Upload.spec.ts']];
+var LAYOUT=[['dir','config/'],['config/variables.ts'],['dir','fixtures/'],['fixtures/lt-fixture.ts'],['dir','pages/'],['x','BasePage.ts'],['x','app/LoginPage.ts'],['pages/app/CheckoutPage.ts'],['pages/components/DatePicker.ts'],['dir','test-data/'],['test-data/users.json'],['test-data/paymentMethods.json'],['dir','tests/'],['tests/TC_Checkout_Payment.spec.ts'],['x','TC_Login_DataDriven.spec.ts'],['x','TC_Booking_DatePicker.spec.ts'],['x','TC_FileUpload.spec.ts']];
 (function(){var F=$('#ft');LAYOUT.forEach(function(l){if(l[0]==='dir'){var d=document.createElement('div');d.className='dir';d.textContent=l[1];F.appendChild(d)}else if(l[0]==='x'){var e=document.createElement('div');e.style.cssText='padding:3px 8px 3px 22px;color:var(--text-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';e.textContent=l[1];F.appendChild(e)}else{var b=document.createElement('button');b.dataset.f=l[0];b.setAttribute('aria-pressed','false');b.innerHTML=esc(l[0].split('/').slice(-1)[0])+'<small>●</small>';b.onclick=function(){stopAll();showFile(l[0])};F.appendChild(b)}})})();
 function showFile(f){var x=FILES.filter(function(y){return y[0]===f})[0];if(!x)return;$$('#ft button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.f===f))});$('#cvN').textContent=x[0];$('#cvD').textContent=x[1];var c=$('#cvC');c.innerHTML=hlCode(x[2]);c.classList.remove('rise');void c.offsetWidth;c.classList.add('rise')}
-S.deliver=async function(t){var order=['config/variables.ts','fixtures/lt-fixture.ts','pages/cura/AppointmentPage.ts','pages/components/DatePicker.ts','test-data/curaUsers.json','test-data/curaPrograms.json','tests/TC_CURA_DynamicXPath.spec.ts'];
+S.deliver=async function(t){var order=['config/variables.ts','fixtures/lt-fixture.ts','pages/app/CheckoutPage.ts','pages/components/DatePicker.ts','test-data/users.json','test-data/paymentMethods.json','tests/TC_Checkout_Payment.spec.ts'];
   for(var k=0;k<2;k++)for(var i=0;i<order.length;i++){if(t!==RUN)return;showFile(order[i]);await wait(4200)}};
 
 /* 12 scope */
-var SC=[['','navigateTo /','200'],['gh','if (promo banner) { ... }  branch not taken','not recorded'],['','sendKeys "John Doe"','200'],['gh','SELECT status FROM bookings  (database check)','not recorded'],['inf','getText #summary  → compared in code','assertion inferred'],['gh','afterTest hook: delete test data','not recorded'],['gh','native desktop or mobile app step','out of scope']];
+var SC=[['','navigateTo /','200'],['gh','if (promo banner) { ... }  branch not taken','not recorded'],['','sendKeys "qa.user@example.com"','200'],['gh','SELECT status FROM bookings  (database check)','not recorded'],['inf','getText #summary  → compared in code','assertion inferred'],['gh','afterTest hook: delete test data','not recorded'],['gh','native desktop or mobile app step','out of scope']];
 S.scope=async function(t){var L=$('#scL');L.innerHTML='';$$('#scR .rl').forEach(function(r){r.classList.remove('on')});
   SC.forEach(function(x){var d=document.createElement('div');d.className='sll '+x[0];d.innerHTML='<span>'+esc(x[1])+'</span><span>'+esc(x[2])+'</span>';L.appendChild(d)});
   var gh=$$('.sll.gh, .sll.inf',L);await wait(500);
